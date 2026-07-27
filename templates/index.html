@@ -1,0 +1,858 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+AI Career Roadmap Planner
+{% endblock %}
+
+
+
+{% block content %}
+
+
+
+<style>
+
+.hero-section{
+
+    background:linear-gradient(135deg,#4F46E5,#7C3AED);
+
+    color:white;
+
+    border-radius:30px;
+
+}
+
+
+.feature-card{
+
+    border:none;
+
+    border-radius:20px;
+
+    transition:.3s;
+
+}
+
+
+.feature-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+
+
+.icon-box{
+
+    font-size:50px;
+
+}
+
+
+
+.step-card{
+
+    border:none;
+
+    border-radius:20px;
+
+    background:#f8fafc;
+
+}
+
+
+
+</style>
+
+
+
+
+
+<div class="container mt-5">
+
+
+
+<!-- HERO SECTION -->
+
+
+<div class="card hero-section shadow-lg">
+
+
+<div class="card-body p-5">
+
+
+<div class="row align-items-center">
+
+
+
+<div class="col-md-7">
+
+
+<h1 class="display-4 fw-bold">
+
+Build Your Future in Artificial Intelligence 🚀
+
+</h1>
+
+
+
+<p class="fs-5 mt-3">
+
+
+AI Career Roadmap Planner helps students create personalized AI learning paths,
+track skills, analyze progress, and achieve career goals step by step.
+
+
+</p>
+
+
+
+<div class="mt-4">
+
+
+<a href="{{ url_for('create_profile') }}"
+
+class="btn btn-light btn-lg me-2">
+
+
+<i class="bi bi-rocket-takeoff-fill me-2"></i>
+
+Start Your Journey
+
+
+</a>
+
+
+
+<a href="{{ url_for('login') }}"
+
+class="btn btn-outline-light btn-lg">
+
+
+Login
+
+
+</a>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<div class="col-md-5 text-center">
+
+
+<div style="font-size:130px;">
+
+🧠
+
+</div>
+
+
+<p class="fs-4">
+
+AI + Career + Learning
+
+</p>
+
+
+</div>
+
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- FEATURES -->
+
+
+<h2 class="text-center mt-5 mb-4">
+
+✨ Powerful Features
+
+</h2>
+
+
+
+
+<div class="row g-4">
+
+
+
+<div class="col-md-4">
+
+
+<div class="card feature-card shadow-sm h-100">
+
+
+<div class="card-body text-center p-4">
+
+
+<div class="icon-box">
+
+🎯
+
+</div>
+
+
+<h4 class="mt-3">
+
+Personalized Roadmaps
+
+</h4>
+
+
+
+<p class="text-muted">
+
+Generate career-specific learning paths based on your goals.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-4">
+
+
+<div class="card feature-card shadow-sm h-100">
+
+
+<div class="card-body text-center p-4">
+
+
+<div class="icon-box">
+
+📊
+
+</div>
+
+
+<h4 class="mt-3">
+
+Progress Tracking
+
+</h4>
+
+
+
+<p class="text-muted">
+
+Monitor completed skills and measure your improvement.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-md-4">
+
+
+<div class="card feature-card shadow-sm h-100">
+
+
+<div class="card-body text-center p-4">
+
+
+<div class="icon-box">
+
+🤖
+
+</div>
+
+
+<h4 class="mt-3">
+
+AI Career Advisor
+
+</h4>
+
+
+
+<p class="text-muted">
+
+Receive recommendations based on your learning profile.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- HOW IT WORKS -->
+
+
+<h2 class="text-center mt-5 mb-4">
+
+⚡ How It Works
+
+</h2>
+
+
+
+<div class="row g-4">
+
+
+
+<div class="col-md-4">
+
+<div class="card step-card shadow-sm h-100">
+
+
+<div class="card-body text-center">
+
+
+<h1 class="text-primary">
+
+1
+
+</h1>
+
+
+<h5>
+
+Create Profile
+
+</h5>
+
+
+<p>
+
+Tell us your goals, skills and interests.
+
+</p>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+<div class="col-md-4">
+
+<div class="card step-card shadow-sm h-100">
+
+
+<div class="card-body text-center">
+
+
+<h1 class="text-success">
+
+2
+
+</h1>
+
+
+<h5>
+
+Generate Roadmap
+
+</h5>
+
+
+<p>
+
+Get a customized AI career learning path.
+
+</p>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<div class="col-md-4">
+
+<div class="card step-card shadow-sm h-100">
+
+
+<div class="card-body text-center">
+
+
+<h1 class="text-warning">
+
+3
+
+</h1>
+
+
+<h5>
+
+Track Growth
+
+</h5>
+
+
+<p>
+
+Complete skills and analyze progress.
+
+</p>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- TECH STACK -->
+
+
+<div class="card shadow-sm mt-5 mb-5 rounded-4">
+
+
+<div class="card-body text-center p-4">
+
+
+<h3>
+
+🛠 Built With
+
+</h3>
+
+
+<div class="mt-3">
+
+
+<span class="badge bg-primary fs-6 m-1">
+
+Python
+
+</span>
+
+
+<span class="badge bg-success fs-6 m-1">
+
+Flask
+
+</span>
+
+
+<span class="badge bg-warning text-dark fs-6 m-1">
+
+Bootstrap
+
+</span>
+
+
+<span class="badge bg-info fs-6 m-1">
+
+AI Recommendation System
+
+</span>
+
+
+<span class="badge bg-dark fs-6 m-1">
+
+Data Analytics
+
+</span>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+<!-- PROJECT OVERVIEW -->
+
+<div class="card shadow-lg rounded-4 mt-5 mb-5">
+
+
+<div class="card-body p-5">
+
+
+<div class="row align-items-center">
+
+
+
+<div class="col-md-8">
+
+
+<h2 class="fw-bold text-primary">
+
+🚀 About AI Career Roadmap Planner
+
+</h2>
+
+
+<p class="mt-3 fs-5">
+
+
+AI Career Roadmap Planner is an intelligent career guidance platform
+designed to help students plan their journey in Artificial Intelligence.
+
+
+</p>
+
+
+
+<p class="text-muted">
+
+
+The system analyzes user goals, education level, programming experience,
+and interests to generate a personalized learning roadmap.
+Users can track completed skills, analyze progress, and receive AI-based
+career recommendations.
+
+
+</p>
+
+
+
+</div>
+
+
+
+
+<div class="col-md-4 text-center">
+
+
+<div style="font-size:90px;">
+
+🧠🤖
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+<!-- PROJECT SCREENSHOTS -->
+
+
+<h2 class="text-center mt-5 mb-4">
+
+📸 Project Preview
+
+</h2>
+
+
+
+<div class="row g-4 mb-5">
+
+
+
+<div class="col-md-6">
+
+
+<div class="card shadow-sm rounded-4 overflow-hidden">
+
+
+<img 
+src="{{ url_for('static', filename='images/dashboard.png') }}"
+class="img-fluid">
+
+
+<div class="card-body text-center">
+
+<h5>
+
+📊 Dashboard
+
+</h5>
+
+<p class="text-muted">
+
+Track your AI learning progress.
+
+</p>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-6">
+
+
+<div class="card shadow-sm rounded-4 overflow-hidden">
+
+
+<img 
+src="{{ url_for('static', filename='images/roadmap.png') }}"
+class="img-fluid">
+
+
+<div class="card-body text-center">
+
+
+<h5>
+
+🛣 Career Roadmap
+
+</h5>
+
+
+<p class="text-muted">
+
+Follow your personalized learning path.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-md-6">
+
+
+<div class="card shadow-sm rounded-4 overflow-hidden">
+
+
+<img 
+src="{{ url_for('static', filename='images/analytics.png') }}"
+class="img-fluid">
+
+
+<div class="card-body text-center">
+
+
+<h5>
+
+📈 Analytics Dashboard
+
+</h5>
+
+
+<p class="text-muted">
+
+Visualize your skill progress.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-md-6">
+
+
+<div class="card shadow-sm rounded-4 overflow-hidden">
+
+
+<img 
+src="{{ url_for('static', filename='images/profile.png') }}"
+class="img-fluid">
+
+
+<div class="card-body text-center">
+
+
+<h5>
+
+👤 User Profile
+
+</h5>
+
+
+<p class="text-muted">
+
+Manage your career information.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+</div>
+<!-- DEVELOPER SECTION -->
+
+
+<div class="card rounded-4 shadow-sm mb-5">
+
+
+<div class="card-body text-center p-5">
+
+
+<h2 class="fw-bold">
+
+👩‍💻 Developer
+
+</h2>
+
+
+
+<h4 class="text-primary mt-3">
+
+Beena Naseer
+
+</h4>
+
+
+
+<p class="text-muted">
+
+BS Artificial Intelligence Student  
+<br>
+Developer of AI Career Roadmap Planner
+
+</p>
+
+
+
+<div>
+
+
+<a href="#"
+
+class="btn btn-dark me-2">
+
+<i class="bi bi-github"></i>
+
+GitHub
+
+</a>
+
+
+
+<a href="#"
+
+class="btn btn-primary">
+
+<i class="bi bi-linkedin"></i>
+
+LinkedIn
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+{% endblock %}

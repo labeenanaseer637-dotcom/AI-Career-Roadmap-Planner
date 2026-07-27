@@ -1,0 +1,38 @@
+body {
+
+    font-family: 'Segoe UI', sans-serif;
+
+}
+
+
+.card {
+
+    border-radius: 15px;
+
+}
+
+
+
+.card:hover {
+
+    transform: translateY(-5px);
+
+    transition: 0.3s;
+
+}
+
+
+
+.navbar-brand {
+
+    font-weight: bold;
+
+}
+
+
+
+.btn {
+
+    border-radius: 20px;
+
+}

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile | AI Career Planner</title>
+    <!-- Bootstrap CSS -->
+    <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" 
+    rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #eef2ff, #f8f9fa);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .profile-card {
+            max-width: 650px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+        }
+        .title {
+
+            text-align: center;
+            color: #4f46e5;
+            font-weight: bold;
+            margin-bottom: 30px;
+
+        }
+        .form-label {
+
+            font-weight: 600;
+            color: #333;
+
+        }
+        .form-control, .form-select {
+
+            border-radius: 12px;
+            padding: 12px;
+
+        }
+        .form-control:focus,
+        .form-select:focus {
+
+            border-color: #4f46e5;
+            box-shadow: 0 0 8px rgba(79,70,229,0.3);
+
+        }
+        .btn-save {
+
+            background: #4f46e5;
+            color: white;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            transition: 0.3s;
+
+        }
+        .btn-save:hover {
+
+            background: #3730a3;
+            transform: translateY(-2px);
+
+        }
+        .back-link {
+
+            text-decoration: none;
+            color: #4f46e5;
+            font-weight: 600;
+
+        }
+        .icon {
+
+            font-size: 45px;
+            text-align:center;
+            margin-bottom:10px;
+
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="profile-card">
+<div class="icon">
+    👤
+</div>
+<h1 class="title">
+    Edit Your Profile
+</h1>
+<form method="POST">
+<div class="mb-3">
+<label class="form-label">
+    Name
+</label>
+<input 
+type="text" 
+class="form-control"
+name="name"
+value="{{ user.name }}">
+</div>
+<div class="mb-3">
+<label class="form-label">
+    Age
+</label>
+<input 
+type="number"
+class="form-control"
+name="age"
+value="{{ user.age }}">
+</div>
+<div class="mb-3">
+<label class="form-label">
+    Education
+</label>
+<input 
+type="text"
+class="form-control"
+name="education"
+value="{{ user.education }}">
+</div>
+<div class="mb-3">
+<label class="form-label">
+    Study Hours Per Day
+</label>
+<input 
+type="number"
+step="0.5"
+class="form-control"
+name="study_hours"
+value="{{ user.study_hours }}">
+</div>
+<div class="mb-3">
+<label class="form-label">
+    Career Goal
+</label>
+<select 
+class="form-select"
+name="career_goal">
+{% for career in careers %}
+<option value="{{ career }}"
+{% if career == user.career_goal %}selected{% endif %}>
+{{ career }}
+</option>
+{% endfor %}
+</select>
+</div>
+<div class="mb-4">
+<label class="form-label">
+    Password
+</label>
+<input 
+type="password"
+class="form-control"
+name="password"
+value="{{ user.password }}">
+</div>
+<button 
+type="submit"
+class="btn btn-save w-100">
+💾 Save Changes
+</button>
+</form>
+<div class="text-center mt-4">
+<a 
+class="back-link"
+href="{{ url_for('profile') }}">
+← Back to Profile
+</a>
+</div>
+</div>
+</div>
+</body>
+</html>

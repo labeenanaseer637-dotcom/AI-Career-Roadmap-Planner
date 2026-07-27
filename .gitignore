@@ -1,0 +1,33 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Environment variables (important 🔐)
+.env
+
+# Flask
+instance/
+
+# User data (keep private)
+data/users.csv
+data/progress.csv
+
+# Generated charts
+static/charts/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log

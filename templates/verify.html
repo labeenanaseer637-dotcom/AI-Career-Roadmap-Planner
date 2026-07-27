@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+Email Verification
+
+{% endblock %}
+
+
+
+
+{% block content %}
+
+
+
+<div class="container mt-5 mb-5">
+
+
+<div class="row justify-content-center">
+
+
+<div class="col-lg-5">
+
+
+
+<div class="card shadow-lg border-0 rounded-4">
+
+
+
+
+
+<div class="card-header text-white text-center py-4"
+
+style="background:linear-gradient(135deg,#4F46E5,#7C3AED);">
+
+
+<h2>
+
+📧 Verify Your Email
+
+</h2>
+
+
+<p class="mb-0">
+
+Secure your AI Career Planner account
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card-body p-4">
+
+
+
+
+
+{% if error %}
+
+<div class="alert alert-danger rounded-4">
+
+<i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+{{ error }}
+
+</div>
+
+{% endif %}
+
+
+
+
+
+
+
+<div class="text-center mb-4">
+
+
+<div style="font-size:70px;">
+
+🔐
+
+</div>
+
+
+<p class="text-muted">
+
+Enter the 6-digit verification code sent to your email.
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+
+<form method="POST">
+
+
+
+
+
+
+<label class="fw-semibold">
+
+Verification Code
+
+</label>
+
+
+
+<div class="input-group mb-4">
+
+
+<span class="input-group-text">
+
+<i class="bi bi-shield-lock-fill"></i>
+
+</span>
+
+
+
+<input
+
+type="text"
+
+name="code"
+
+class="form-control"
+
+placeholder="Enter 6 digit code"
+
+maxlength="6"
+
+required>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<button
+
+type="submit"
+
+class="btn btn-primary w-100 py-3"
+
+onclick="showSpinner(this)">
+
+
+<i class="bi bi-check-circle-fill me-2"></i>
+
+Verify Account
+
+
+</button>
+
+
+
+
+
+</form>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+{% endblock %}

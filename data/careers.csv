@@ -1,0 +1,116 @@
+career,skill,category,difficulty
+AI Engineer,Python,Programming,Easy
+AI Engineer,Object Oriented Programming,Programming,Easy
+AI Engineer,Git & GitHub,Tools,Easy
+AI Engineer,NumPy,Data Science,Easy
+AI Engineer,Pandas,Data Science,Easy
+AI Engineer,Matplotlib,Data Visualization,Easy
+AI Engineer,Statistics,Mathematics,Medium
+AI Engineer,Linear Algebra,Mathematics,Medium
+AI Engineer,Machine Learning,AI,Medium
+AI Engineer,Scikit-learn,AI,Medium
+AI Engineer,Deep Learning,AI,Hard
+AI Engineer,TensorFlow,AI,Hard
+AI Engineer,PyTorch,AI,Hard
+AI Engineer,Computer Vision,AI,Hard
+AI Engineer,Natural Language Processing,AI,Hard
+AI Engineer,MLOps,Deployment,Hard
+AI Engineer,Docker,Deployment,Medium
+AI Engineer,Model Deployment,Deployment,Hard
+
+Data Scientist,Python,Programming,Easy
+Data Scientist,SQL,Database,Easy
+Data Scientist,Excel,Tools,Easy
+Data Scientist,NumPy,Data Science,Easy
+Data Scientist,Pandas,Data Science,Easy
+Data Scientist,Matplotlib,Visualization,Easy
+Data Scientist,Seaborn,Visualization,Medium
+Data Scientist,Statistics,Mathematics,Medium
+Data Scientist,Hypothesis Testing,Mathematics,Medium
+Data Scientist,Machine Learning,AI,Medium
+Data Scientist,Scikit-learn,AI,Medium
+Data Scientist,Feature Engineering,AI,Hard
+Data Scientist,Data Cleaning,Data Science,Medium
+Data Scientist,Power BI,BI,Medium
+Data Scientist,Tableau,BI,Medium
+
+
+Data Analyst,Excel,Tools,Easy
+Data Analyst,SQL,Database,Easy
+Data Analyst,Python,Programming,Easy
+Data Analyst,Pandas,Data Science,Easy
+Data Analyst,NumPy,Data Science,Easy
+Data Analyst,Matplotlib,Visualization,Easy
+Data Analyst,Power BI,BI,Medium
+Data Analyst,Tableau,BI,Medium
+Data Analyst,Dashboard Creation,BI,Medium
+Data Analyst,Statistics,Mathematics,Medium
+
+
+Web Developer,HTML,Frontend,Easy
+Web Developer,CSS,Frontend,Easy
+Web Developer,JavaScript,Frontend,Medium
+Web Developer,Git,Tools,Easy
+Web Developer,Bootstrap,Frontend,Easy
+Web Developer,React,Frontend,Hard
+Web Developer,Python,Programming,Easy
+Web Developer,Django,Backend,Medium
+Web Developer,REST API,Backend,Medium
+Web Developer,SQL,Database,Medium
+
+Software Engineer,Python,Programming,Easy
+Software Engineer,C++,Programming,Medium
+Software Engineer,OOP,Programming,Easy
+Software Engineer,Data Structures,Programming,Medium
+Software Engineer,Algorithms,Programming,Hard
+Software Engineer,Git,Tools,Easy
+Software Engineer,SQL,Database,Easy
+Software Engineer,System Design,Systems,Hard
+Software Engineer,Testing,Software Engineering,Medium
+Software Engineer,Debugging,Software Engineering,Medium
+
+Cybersecurity Analyst,Networking,Networking,Easy
+Cybersecurity Analyst,Linux,Systems,Medium
+Cybersecurity Analyst,Python,Programming,Medium
+Cybersecurity Analyst,Ethical Hacking,Security,Hard
+Cybersecurity Analyst,Cryptography,Security,Hard
+Cybersecurity Analyst,Web Security,Security,Medium
+Cybersecurity Analyst,Digital Forensics,Security,Hard
+Cybersecurity Analyst,Penetration Testing,Security,Hard
+Cybersecurity Analyst,SIEM Tools,Security,Hard
+Cybersecurity Analyst,Risk Assessment,Security,Medium
+
+Cloud Engineer,Linux,Systems,Easy
+Cloud Engineer,Networking,Networking,Easy
+Cloud Engineer,Python,Programming,Medium
+Cloud Engineer,AWS,Cloud,Medium
+Cloud Engineer,Microsoft Azure,Cloud,Medium
+Cloud Engineer,Google Cloud Platform,Cloud,Medium
+Cloud Engineer,Docker,Cloud,Medium
+Cloud Engineer,Kubernetes,Cloud,Hard
+Cloud Engineer,Terraform,Cloud,Hard
+Cloud Engineer,CI/CD,DevOps,Hard
+
+
+DevOps Engineer,Linux,Systems,Easy
+DevOps Engineer,Git,Tools,Easy
+DevOps Engineer,Python,Programming,Medium
+DevOps Engineer,Docker,Containers,Medium
+DevOps Engineer,Kubernetes,Containers,Hard
+DevOps Engineer,Jenkins,CI/CD,Medium
+DevOps Engineer,GitHub Actions,CI/CD,Medium
+DevOps Engineer,AWS,Cloud,Medium
+DevOps Engineer,Terraform,Infrastructure,Hard
+DevOps Engineer,Monitoring,DevOps,Medium
+
+Full Stack Developer,HTML,Frontend,Easy
+Full Stack Developer,CSS,Frontend,Easy
+Full Stack Developer,JavaScript,Frontend,Medium
+Full Stack Developer,React,Frontend,Hard
+Full Stack Developer,Python,Backend,Easy
+Full Stack Developer,Django,Backend,Medium
+Full Stack Developer,REST API,Backend,Medium
+Full Stack Developer,SQL,Database,Medium
+Full Stack Developer,Git,Tools,Easy
+Full Stack Developer,Deployment,DevOps,Medium
+

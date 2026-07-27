@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+Profile
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<div class="container mt-5 text-center">
+
+
+<div class="card shadow p-5">
+
+
+<h1>
+🎉 Profile Created Successfully!
+</h1>
+
+
+<h3 class="mt-4">
+
+Your User ID:
+
+<span class="text-primary">
+
+{{user.user_id}}
+
+</span>
+
+</h3>
+
+
+<p>
+Keep this ID for login.
+</p>
+
+
+<a href="/" class="btn btn-dark">
+
+Home
+
+</a>
+
+
+</div>
+
+
+</div>
+{% endblock %}

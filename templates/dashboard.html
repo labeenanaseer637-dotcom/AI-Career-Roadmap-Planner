@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block content %}
+<style>
+.hero-card{
+    background:linear-gradient(135deg,#4F46E5,#7C3AED);
+    color:white;
+    border:none;
+    border-radius:25px;
+}
+.dashboard-card{
+    border:none;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+.dashboard-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 35px rgba(0,0,0,.15);
+}
+.stat-card{
+    text-align:center;
+    padding:30px;
+}
+.stat-icon{
+    font-size:45px;
+    margin-bottom:15px;
+}
+.info-label{
+    color:#64748B;
+    font-weight:600;
+}
+.info-value{
+    font-size:18px;
+    font-weight:700;
+}
+.progress{
+    height:15px;
+    border-radius:30px;
+}
+.action-btn{
+    width:100%;
+    border-radius:12px;
+    font-weight:600;
+}
+@media (max-width:768px){
+
+.hero-card{
+    text-align:center;
+    padding:30px;
+}
+
+.stat-card{
+    margin-bottom:15px;
+}
+
+.action-btn{
+    width:100%;
+}
+
+h2{
+    font-size:24px;
+}
+
+}
+
+</style>
+
+<div class="container">
+<div class="card hero-card shadow-lg mb-4">
+
+<div class="card-body p-5">
+
+<h2>
+    Welcome back, {{ user.name }} 👋
+</h2>
+
+<p class="fs-5 mb-2">
+    Let's continue your journey toward becoming a
+    <strong>{{ user.career_goal }}</strong>
+</p>
+
+<p class="text-light mb-0">
+    <i class="bi bi-calendar-event me-2"></i>
+    {{ current_date }}
+</p>
+
+</div>
+
+</div>
+<div class="row g-4 mb-4">
+
+    <!-- Progress -->
+
+    <div class="col-md-4">
+
+        <div class="card dashboard-card h-100">
+
+            <div class="card-body stat-card">
+
+                <i class="bi bi-graph-up-arrow stat-icon text-primary"></i>
+
+                <h5>Progress</h5>
+
+                <h2 class="fw-bold text-success">
+
+                    {{ percentage }}%
+
+                </h2>
+
+                <div class="progress mt-3">
+
+                    <div class="progress-bar bg-success"
+
+                         style="width: {{ percentage }}%;">
+
+                        {{ percentage }}%
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Completed Skills -->
+
+    <div class="col-md-4">
+
+        <div class="card dashboard-card h-100">
+
+            <div class="card-body stat-card">
+
+                <i class="bi bi-check-circle-fill stat-icon text-success"></i>
+
+                <h5>Skills Completed</h5>
+
+                <h2 class="fw-bold">
+
+                    {{ completed }}/{{ total }}
+
+                </h2>
+
+                <p class="text-muted">
+
+                    Skills Mastered
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Career Goal -->
+
+    <div class="col-md-4">
+
+        <div class="card dashboard-card h-100">
+
+            <div class="card-body stat-card">
+
+                <i class="bi bi-bullseye stat-icon text-danger"></i>
+
+                <h5>Career Goal</h5>
+
+                <h4 class="mt-3">
+
+                    {{ user.career_goal }}
+
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="card dashboard-card mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex align-items-center mb-4">
+
+            <i class="bi bi-person-circle fs-2 text-primary me-3"></i>
+
+            <div>
+
+                <h3 class="mb-0">Profile Overview</h3>
+
+                <small class="text-muted">
+                    Your learning profile at a glance
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+
+                <div class="p-3 rounded-4 bg-light">
+
+                    <p class="info-label mb-1">User ID</p>
+                    <p class="info-value">{{ user.user_id }}</p>
+
+                    <hr>
+
+                    <p class="info-label mb-1">Age</p>
+                    <p class="info-value">{{ user.age }}</p>
+
+                    <hr>
+
+                    <p class="info-label mb-1">Education</p>
+                    <p class="info-value">{{ user.education }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="p-3 rounded-4 bg-light">
+
+                    <p class="info-label mb-1">Career Goal</p>
+                    <p class="info-value">{{ user.career_goal }}</p>
+
+                    <hr>
+
+                    <p class="info-label mb-1">Daily Study Hours</p>
+                    <p class="info-value">
+                        {{ user.study_hours }} Hours / Day
+                    </p>
+
+                    <hr>
+
+                    <p class="info-label mb-1">Current Progress</p>
+                    <p class="info-value text-success">
+                        {{ percentage }}% Completed
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="card dashboard-card mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+
+                <h3 class="mb-1">
+                    <i class="bi bi-bar-chart-line-fill text-success me-2"></i>
+                    Learning Progress
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Keep moving forward—every completed skill brings you closer to your goal.
+                </p>
+
+            </div>
+
+            <span class="badge bg-success fs-6 px-3 py-2">
+                {{ percentage }}%
+            </span>
+
+        </div>
+
+        <div class="progress mt-4">
+
+            <div class="progress-bar bg-success"
+                 role="progressbar"
+                 style="width: {{ percentage }}%;"
+                 aria-valuenow="{{ percentage }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+
+                {{ percentage }}%
+
+            </div>
+
+        </div>
+
+        <div class="row text-center mt-4">
+
+            <div class="col-md-4">
+
+                <h4 class="text-success fw-bold">
+                    {{ completed }}
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Completed
+                </p>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <h4 class="text-primary fw-bold">
+                    {{ total }}
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Total Skills
+                </p>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <h4 class="text-warning fw-bold">
+                    {{ total - completed }}
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Remaining
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="alert alert-primary border-0 rounded-4 shadow-sm">
+<div class="card dashboard-card mb-4">
+
+    <div class="card-header bg-warning text-dark py-3">
+
+        <h4 class="mb-0">
+            🏆 Achievements
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if badges %}
+
+            <div class="row g-3">
+
+                {% for emoji, badge in badges %}
+
+                <div class="col-md-4">
+
+                    <div class="card border-0 shadow-sm text-center p-3">
+
+                        <h1>{{ emoji }}</h1>
+
+                        <h5>{{ badge }}</h5>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-secondary mb-0">
+
+                🚀 Complete your first skill to unlock achievements!
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+    <h5>
+        <i class="bi bi-stars me-2"></i>
+        Daily Motivation
+    </h5>
+
+    <p class="mb-2">
+        Every expert was once a beginner. Stay consistent and keep learning.
+    </p>
+
+    <strong>
+        🚀 You're only {{ total - completed }} skills away from your career goal!
+    </strong>
+
+</div>
+<div class="card dashboard-card mb-4">
+
+    <div class="card-header bg-dark text-white py-3">
+
+        <h4 class="mb-0">
+
+            <i class="bi bi-pie-chart-fill me-2"></i>
+
+            Learning Analytics
+
+        </h4>
+
+    </div>
+
+    <div class="card-body text-center">
+
+        <div class="d-flex justify-content-center">
+
+    <canvas id="progressChart"
+            width="220"
+            height="220">
+    </canvas>
+
+      </div>
+
+        <p class="text-muted mt-4">
+
+            This chart shows your overall learning progress based on completed and remaining skills.
+
+        </p>
+
+        <a href="{{ url_for('analytics') }}"
+           class="btn btn-primary">
+
+            <i class="bi bi-bar-chart-line-fill me-2"></i>
+
+            Open Analytics Dashboard
+
+        </a>
+
+    </div>
+
+</div>
+<div class="card dashboard-card mb-4">
+
+    <div class="card-header bg-primary text-white py-3">
+
+        <h4 class="mb-0">
+
+            <i class="bi bi-robot me-2"></i>
+
+            AI Career Advisor
+
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        {% for item in advice %}
+
+        <div class="alert alert-light border-start border-4 border-primary shadow-sm">
+
+            <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+
+            {{ item }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+<div class="row g-4 mb-5">
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card text-center h-100">
+
+            <div class="card-body p-4">
+
+                <i class="bi bi-person-circle display-4 text-primary"></i>
+
+                <h5 class="mt-3">Profile</h5>
+
+                <a href="{{ url_for('profile') }}"
+                   class="btn btn-primary action-btn mt-3">
+
+                    Open
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card text-center h-100">
+
+            <div class="card-body p-4">
+
+                <i class="bi bi-signpost-split display-4 text-success"></i>
+
+                <h5 class="mt-3">Roadmap</h5>
+
+                <a href="{{ url_for('roadmap') }}"
+                   class="btn btn-success action-btn mt-3">
+
+                    View
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card text-center h-100">
+
+            <div class="card-body p-4">
+
+                <i class="bi bi-bar-chart-fill display-4 text-warning"></i>
+
+                <h5 class="mt-3">Analytics</h5>
+
+                <a href="{{ url_for('analytics') }}"
+                   class="btn btn-warning action-btn mt-3">
+
+                    Explore
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card dashboard-card text-center h-100">
+
+            <div class="card-body p-4">
+
+                <i class="bi bi-box-arrow-right display-4 text-danger"></i>
+
+                <h5 class="mt-3">Logout</h5>
+
+                <a href="{{ url_for('logout') }}"
+                   class="btn btn-danger action-btn mt-3">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>    
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const centerText = {
+    id: 'centerText',
+    afterDraw(chart) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+
+        if (!meta.data.length) return;
+
+        const x = meta.data[0].x;
+        const y = meta.data[0].y;
+
+        ctx.save();
+
+        ctx.textAlign = 'center';
+
+        ctx.font = 'bold 28px Arial';
+        ctx.fillStyle = '#22c55e';
+        ctx.fillText('{{ percentage }}%', x, y - 5);
+
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#6b7280';
+        ctx.fillText('Completed', x, y + 20);
+
+        ctx.restore();
+    }
+};
+
+const ctx = document.getElementById('progressChart');
+
+new Chart(ctx, {
+    type: 'doughnut',
+
+    data: {
+        labels: ['Completed', 'Remaining'],
+        datasets: [{
+            data: [{{ completed }}, {{ remaining }}],
+            backgroundColor: [
+                '#22c55e',
+                '#e5e7eb'
+            ],
+            borderWidth: 0
+        }]
+    },
+
+    options: {
+        responsive: true,
+        cutout: '70%',
+        animation: {
+            animateRotate: true,
+            duration: 1500
+        },
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    },
+
+    plugins: [centerText]
+});
+</script>
+{% endblock %}

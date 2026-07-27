@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Page Not Found
+{% endblock %}
+
+
+
+
+{% block content %}
+
+
+
+<div class="container mt-5 mb-5">
+
+
+<div class="row justify-content-center">
+
+
+<div class="col-lg-7">
+
+
+
+<div class="card shadow-lg border-0 rounded-4 text-center p-5">
+
+
+
+<div style="font-size:100px;">
+
+🤖💭
+
+</div>
+
+
+
+
+<h1 class="display-1 fw-bold text-primary">
+
+404
+
+</h1>
+
+
+
+
+<h2 class="fw-bold">
+
+Oops! Page Not Found
+
+</h2>
+
+
+
+
+<p class="text-muted fs-5 mt-3">
+
+
+Looks like this page went on its own career journey 🚀
+
+
+</p>
+
+
+
+<p class="text-muted">
+
+The page you are trying to access does not exist or has been moved.
+
+</p>
+
+
+
+
+
+
+<div class="mt-4">
+
+
+<a href="{{ url_for('home') }}"
+
+class="btn btn-outline-primary btn-lg me-2">
+
+
+<i class="bi bi-house-fill me-2"></i>
+
+Home
+
+
+</a>
+
+
+
+
+
+<a href="{{ url_for('dashboard') }}"
+
+class="btn btn-primary btn-lg">
+
+
+<i class="bi bi-speedometer2 me-2"></i>
+
+Dashboard
+
+
+</a>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+{% endblock %}

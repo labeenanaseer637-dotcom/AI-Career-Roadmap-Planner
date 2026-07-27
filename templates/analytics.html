@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analytics
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+body{
+    background:#f8fafc;
+}
+
+.analytics-header{
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+    border:none;
+    border-radius:25px;
+}
+
+.analytics-card,
+.chart-card{
+    border:none;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.analytics-card:hover,
+.chart-card:hover{
+    transform:translateY(-10px) scale(1.02);
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+}
+
+.metric-icon{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+.progress{
+    height:20px;
+    border-radius:30px;
+}
+
+.progress-bar{
+    border-radius:30px;
+    font-weight:bold;
+}
+
+.btn-custom{
+    border-radius:12px;
+    font-weight:600;
+}
+
+.chart-image{
+    max-height:320px;
+    object-fit:contain;
+}
+
+.summary-card{
+    background:#f8fafc;
+    border-radius:15px;
+    padding:20px;
+}
+@media (max-width:768px){
+
+.analytics-header{
+    text-align:center;
+    padding:30px;
+}
+
+.analytics-card{
+    margin-bottom:15px;
+}
+
+.chart-image{
+    max-height:220px;
+}
+
+.btn-custom{
+    width:100%;
+}
+
+}
+</style>
+
+<div class="container mt-5">
+
+<!-- Hero -->
+
+<div class="card analytics-header shadow-lg mb-4">
+
+<div class="card-body text-center p-5">
+
+<h1>
+📊 Analytics Dashboard
+</h1>
+
+<p class="mb-0 fs-5">
+
+Track your learning journey and monitor your roadmap progress.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- Statistics -->
+
+<div class="row g-4 mb-4">
+
+<div class="col-md-3">
+
+<div class="card analytics-card text-center p-4">
+
+<div class="metric-icon">📚</div>
+
+<h3>
+
+{{ analytics.completed_skills()+analytics.remaining_skills() }}
+
+</h3>
+
+<p class="text-muted mb-0">
+Total Skills
+</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card analytics-card text-center p-4">
+
+<div class="metric-icon">✅</div>
+
+<h3 class="text-success">
+
+{{ analytics.completed_skills() }}
+
+</h3>
+
+<p class="text-muted mb-0">
+Completed
+</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card analytics-card text-center p-4">
+
+<div class="metric-icon">⏳</div>
+
+<h3 class="text-warning">
+
+{{ analytics.remaining_skills() }}
+
+</h3>
+
+<p class="text-muted mb-0">
+Remaining
+</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card analytics-card text-center p-4">
+
+<div class="metric-icon">🎯</div>
+
+<h3 class="text-primary">
+
+{{ analytics.progress_percentage() }}%
+
+</h3>
+
+<p class="text-muted mb-0">
+Completion
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Progress -->
+
+<div class="card analytics-card mb-4">
+
+<div class="card-body p-4">
+
+<div class="d-flex justify-content-between">
+
+<h4>
+
+🚀 Overall Progress
+
+</h4>
+
+<span class="badge bg-success fs-6">
+
+{{ analytics.progress_percentage() }}%
+
+</span>
+
+</div>
+
+<div class="progress mt-4">
+
+<div class="progress-bar bg-success"
+
+style="width:{{ analytics.progress_percentage() }}%;">
+
+{{ analytics.progress_percentage() }}%
+
+</div>
+
+</div>
+
+<div class="row text-center mt-4">
+
+<div class="col-md-4">
+
+<h4 class="text-success">
+
+{{ analytics.completed_skills() }}
+
+</h4>
+
+<p class="text-muted">
+Completed
+</p>
+
+</div>
+
+<div class="col-md-4">
+
+<h4 class="text-primary">
+
+{{ analytics.completed_skills()+analytics.remaining_skills() }}
+
+</h4>
+
+<p class="text-muted">
+Total Skills
+</p>
+
+</div>
+
+<div class="col-md-4">
+
+<h4 class="text-warning">
+
+{{ analytics.remaining_skills() }}
+
+</h4>
+
+<p class="text-muted">
+Remaining
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Charts -->
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="card chart-card h-100">
+
+<div class="card-header bg-dark text-white">
+
+🥧 Progress Distribution
+
+</div>
+
+<div class="card-body text-center">
+
+<img
+
+src="{{ url_for('static', filename='charts/progress_pie.png') }}"
+
+class="img-fluid chart-image">
+
+<p class="text-muted mt-3">
+
+Shows completed vs remaining skills.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="card chart-card h-100">
+
+<div class="card-header bg-primary text-white">
+
+📊 Skills by Category
+
+</div>
+
+<div class="card-body text-center">
+
+<img
+
+src="{{ url_for('static', filename='charts/category_bar.png') }}"
+
+class="img-fluid chart-image">
+
+<p class="text-muted mt-3">
+
+Distribution of skills across categories.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Difficulty -->
+
+<div class="card chart-card mt-4 mb-5">
+
+<div class="card-header bg-warning">
+
+⚡ Difficulty Distribution
+
+</div>
+
+<div class="card-body text-center">
+
+<img
+
+src="{{ url_for('static', filename='charts/difficulty.png') }}"
+
+class="img-fluid chart-image">
+
+<p class="text-muted mt-3">
+
+Difficulty level of your learning roadmap.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- Motivation -->
+
+<div class="alert alert-primary rounded-4 border-0 shadow-sm mb-5">
+
+<h5>
+
+🌟 Keep Going!
+
+</h5>
+
+<p class="mb-2">
+
+Every completed skill is one step closer to becoming a successful AI professional.
+
+</p>
+
+<strong>
+
+You have completed {{ analytics.completed_skills() }} skills so far. Keep up the great work!
+
+</strong>
+
+</div>
+
+<div class="text-center mb-5">
+
+<a
+
+href="{{ url_for('dashboard') }}"
+
+class="btn btn-primary btn-lg btn-custom">
+
+<i class="bi bi-arrow-left-circle me-2"></i>
+
+Back to Dashboard
+
+</a>
+
+</div>
+
+</div>
+
+{% endblock %}
