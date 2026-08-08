@@ -23,10 +23,27 @@ class DataManager:
             "verified",
             "verification_code"]
     def create_file_if_not_exists(self):
-        if not os.path.exists(self.file_name):
-            with open(self.file_name, "w", newline="") as file:
-                writer = csv.DictWriter(file, fieldnames=self.fields)
-                writer.writeheader()
+
+     directory = os.path.dirname(self.file_name)
+
+     if directory:
+        os.makedirs(directory, exist_ok=True)
+
+     if not os.path.exists(self.file_name):
+
+        with open(
+            self.file_name,
+            "w",
+            newline="",
+            encoding="utf-8"
+        ) as file:
+
+            writer = csv.DictWriter(
+                file,
+                fieldnames=self.fields
+            )
+
+            writer.writeheader()
     def save_user(self, user):
         self.create_file_if_not_exists()
         with open(self.file_name, "a", newline="") as file:
@@ -83,6 +100,7 @@ class DataManager:
         print("🆕 GENERATED USER ID:", new_id)
         return new_id
     def save_progress(self, user_id, roadmap):
+      os.makedirs("data", exist_ok=True)
       with open("data/progress.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["user_id", "skill_name", "completed"])
@@ -144,6 +162,7 @@ class DataManager:
      print("❌ USER NOT FOUND:", repr(user_id))
      return None  
     def load_user_by_credentials(self, name, password):
+      self.create_file_if_not_exists()
       with open(self.file_name, "r", newline="") as file:
         reader = csv.DictReader(file)
         for row in reader:
@@ -163,6 +182,7 @@ class DataManager:
                 )
       return None
     def update_user(self, updated_user):
+       self.create_file_if_not_exists()
        users = []
        with open(self.file_name, "r", newline="") as file:
          reader = csv.DictReader(file)
@@ -187,7 +207,7 @@ class DataManager:
         writer.writeheader()
         writer.writerows(users)  
     def load_user_by_name(self, name):
-
+      self.create_file_if_not_exists()
       with open(self.file_name, "r", newline="") as file:
 
         reader = csv.DictReader(file)
@@ -214,7 +234,7 @@ class DataManager:
                 )
         return None        
     def load_user_by_email(self, email):
-
+     self.create_file_if_not_exists()
      with open(self.file_name, "r", newline="") as file:
 
         reader = csv.DictReader(file)
@@ -242,6 +262,7 @@ class DataManager:
 
         return None
     def delete_user(self, user_id):
+     self.create_file_if_not_exists()
 
      users = []
 
