@@ -45,7 +45,7 @@ class DataManager:
 
             writer.writeheader()
     def save_user(self, user):
-        self.create_file_if_not_exists()
+        
         with open(self.file_name, "a", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=self.fields)
             writer.writerow(user.to_dict())
