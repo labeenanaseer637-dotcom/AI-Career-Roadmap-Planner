@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
+os.makedirs("data", exist_ok=True)
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "career_planner_secret_key")
