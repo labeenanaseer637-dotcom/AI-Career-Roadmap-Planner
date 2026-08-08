@@ -37,6 +37,7 @@ class User:
       self.career_goal = career_goal
       self.study_hours = study_hours    
     def to_dict(self):
+
       return {
         "user_id": self.user_id,
         "name": self.name,
@@ -51,4 +52,4 @@ class User:
         "learning_style": self.learning_style,
         "email": self.email,
         "verified": self.verified,
-        "verification_code": self.verification_code }  
+        "verification_code": self.verification_code}

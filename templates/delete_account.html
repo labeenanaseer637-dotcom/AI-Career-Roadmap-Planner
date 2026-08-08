@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow border-danger">
+
+        <div class="card-header bg-danger text-white">
+            <h3>Delete Account</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+                <strong>Warning!</strong><br>
+                This action is permanent and cannot be undone.
+            </div>
+
+            <form method="POST">
+
+                <label class="form-label">Enter your password</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    required>
+
+                <button class="btn btn-danger mt-3">
+                    Permanently Delete My Account
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

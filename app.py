@@ -1,3 +1,4 @@
+import re
 from flask import Flask, render_template, request, session,url_for, redirect
 from progress import ProgressTracker
 from user import User
@@ -12,6 +13,9 @@ from recommendation import RecommendationEngine
 from advisor import CareerAdvisor
 from datetime import datetime
 import os 
+from dotenv import load_dotenv
+
+load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get(
     "SECRET_KEY",
@@ -19,11 +23,33 @@ app.secret_key = os.environ.get(
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = "aicareerplanner@gmail.com"
+
+app.config["MAIL_USERNAME"] = os.environ.get(
+    "MAIL_USERNAME"
+)
+
 app.config["MAIL_PASSWORD"] = os.environ.get(
     "MAIL_PASSWORD"
 )
 mail = Mail(app)
+def is_strong_password(password):
+
+    if len(password) < 8:
+        return False
+
+    if not re.search(r"[A-Z]", password):
+        return False
+
+    if not re.search(r"[a-z]", password):
+        return False
+
+    if not re.search(r"\d", password):
+        return False
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False
+
+    return True
 @app.context_processor
 def inject_year():
 
@@ -32,96 +58,201 @@ def inject_year():
     }
 data_manager = DataManager("data/users.csv")
 career_manager = CareerPath("data/careers.csv")
+def get_current_user():
+
+    if "user_id" not in session:
+        return None
+
+    return data_manager.load_user_by_id(
+        session["user_id"]
+    )
 @app.route("/")
 def home():
     return render_template("index.html")
 @app.route("/create-profile", methods=["GET", "POST"])
 def create_profile():
+
     careers = career_manager.get_careers()
+
     if request.method == "POST":
-        name = request.form["name"]
-        age = int(request.form["age"])
-        education = request.form["education"]
-        study_hours = float(request.form["study_hours"])
-        career_goal = request.form["career_goal"]
-        password = request.form["password"]
-        confirm_password = request.form["confirm_password"]
-        if password != confirm_password:
-         return render_template("create_profile.html",
-        careers=careers,error="Passwords do not match.")  
-        password = generate_password_hash(password)
-        email = request.form["email"]
-        existing = data_manager.load_user_by_email(email)
-        if existing:
-            return render_template(
-        "create_profile.html",
-        careers=careers,
-        error="Email already exists.")
-        verification_code = random.randint(100000,999999)
-        verified = False
-        current_level = request.form["current_level"]
-        programming_experience = request.form["programming_experience"]
-        interests = request.form["interests"]
-        learning_style = request.form["learning_style"]
-        user_id = data_manager.get_next_id()
-        user = User(
-            user_id,
-            name,
-            age,
-            education,
-            career_goal,
-            study_hours,
-            password,
-            current_level,
-            programming_experience,
-            interests,
-            learning_style, email,
-            verified,
-            verification_code )
-        msg = Message(  subject="AI Career Planner Verification",sender=app.config["MAIL_USERNAME"], recipients=[email])
-        msg.body = f"""
-         Hello {name},
-         Welcome to AI Career Planner!
-         Your verification code is:
-              {verification_code}
-              Enter this code to verify your account.
-               If you did not create this account, you can safely ignore this email.
-               Thank you!
-              Regards,
-              AI Career Planner Team"""
+
         try:
-          mail.send(msg)
+
+            # Get form data
+            name = request.form.get("name")
+            age = int(request.form.get("age"))
+            education = request.form.get("education")
+            study_hours = float(request.form.get("study_hours"))
+            career_goal = request.form.get("career_goal")
+
+            email = request.form.get("email").strip().lower()
+
+            password = request.form.get("password")
+            confirm_password = request.form.get("confirm_password")
+
+            current_level = request.form.get("current_level")
+            programming_experience = request.form.get("programming_experience")
+            interests = request.form.get("interests")
+            learning_style = request.form.get("learning_style")
+
+
+            # Check password match
+            if password != confirm_password:
+
+                return render_template(
+                    "create_profile.html",
+                    careers=careers,
+                    error="Passwords do not match."
+                )
+
+
+            # Strong password check
+            if not is_strong_password(password):
+
+                return render_template(
+                    "create_profile.html",
+                    careers=careers,
+                    error="Password must contain at least 8 characters, uppercase, lowercase, number and special character."
+                )
+
+
+            # Check existing email
+            existing_user = data_manager.load_user_by_email(email)
+
+            if existing_user:
+
+                return render_template(
+                    "create_profile.html",
+                    careers=careers,
+                    error="Email already exists."
+                )
+
+
+            # Generate ID
+            user_id = data_manager.get_next_id()
+            
+
+            # Generate verification code
+            verification_code = random.randint(100000, 999999)
+
+
+            # Hash password
+            hashed_password = generate_password_hash(password)
+
+
+            # Create User object
+            user = User(
+                user_id,
+                name,
+                age,
+                education,
+                career_goal,
+                study_hours,
+                hashed_password,
+                current_level,
+                programming_experience,
+                interests,
+                learning_style,
+                email,
+                False,
+                verification_code
+            )
+
+
+            # SAVE USER FIRST
+            data_manager.save_user(user)
+            
+
+            # Send verification email
+            msg = Message(
+                subject="TechPath AI - Email Verification",
+                sender=app.config["MAIL_USERNAME"],
+                recipients=[email]
+            )
+
+
+            msg.html = render_template(
+                "emails/verification_email.html",
+                name=name,
+                code=verification_code,
+                year=datetime.now().year
+            )
+
+
+            try:
+
+                mail.send(msg)
+
+
+            except Exception as e:
+
+                # Remove saved user if email fails
+                data_manager.delete_user(user_id)
+
+                return f"Email could not be sent: {e}"
+
+
+            return redirect(
+                url_for(
+                    "verify",
+                    user_id=user.user_id
+                )
+            )
+
+
         except Exception as e:
-          return f"Email could not be sent: {e}"
-        data_manager.save_user(user)
-        return redirect(
-            url_for("verify", user_id=user.user_id))
+
+            return render_template(
+                "create_profile.html",
+                careers=careers,
+                error=f"Something went wrong: {e}"
+            )
+
+
     return render_template(
         "create_profile.html",
         careers=careers
     )
-@app.route("/verify/<user_id>", methods=["GET","POST"])
+@app.route("/verify/<user_id>", methods=["GET", "POST"])
 def verify(user_id):
+
+   
+
     user = data_manager.load_user_by_id(user_id)
     if not user:
-        return "User not found"
+        return f"User not found. ID received: {user_id}"
+
     if request.method == "POST":
+
+        
+
         try:
-          code = int(request.form["code"])
+            code = int(request.form["code"])
+
         except ValueError:
-         return render_template(
-          "verify.html",
-          user=user,
-          error="Enter numbers only." )
-        if int(code) == user.verification_code:
+            return render_template(
+                "verify.html",
+                user=user,
+                error="Enter numbers only."
+            )
+
+        if code == user.verification_code:
+
             user.verified = True
             user.verification_code = None
+
             data_manager.update_user(user)
+
             return redirect(url_for("login"))
+
         else:
-            return render_template("verify.html",
-            user=user,
-            error="Invalid verification code.")
+
+            return render_template(
+                "verify.html",
+                user=user,
+                error="Invalid verification code."
+            )
+
     return render_template(
         "verify.html",
         user=user
@@ -131,99 +262,371 @@ def verify(user_id):
 def login():
 
     if request.method == "POST":
-        name = request.form.get("name")
+
+       
+
+        email = request.form.get("email").strip().lower()
         password = request.form.get("password")
 
-        user = data_manager.load_user_by_name(name)
-        if user and check_password_hash(user.password,password):
-             if not user.verified:
-               return "Please verify your email first."
-             session["user_id"] = user.user_id 
-             return redirect(url_for("dashboard"))
+        user = data_manager.load_user_by_email(email)
+
+       
+
+        if user and check_password_hash(user.password, password):
+
+            
+
+            if not user.verified:
+                return "Please verify your email first."
+
+            session["user_id"] = user.user_id
+
+            return redirect(url_for("dashboard"))
+
         else:
+
+            
 
             return render_template(
                 "login.html",
-                error="Invalid name or password!"
+                error="Invalid email or password!"
             )
 
     return render_template("login.html")
-
 @app.route("/dashboard")
 def dashboard():
 
     if "user_id" not in session:
         return redirect(url_for("login"))
-    user = data_manager.load_user_by_id(session["user_id"])
+
+    user = get_current_user()
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
     roadmap = career_manager.generate_roadmap(user.career_goal)
+
     progress = ProgressTracker(roadmap)
+
     progress.load_progress(user.user_id)
+
     percentage = progress.progress_percentage()
+
     completed = progress.completed_skills()
+
     total = len(roadmap)
+
     remaining = total - completed
+
     badges = []
+
     if completed >= 1:
-     badges.append(("🥉", "First Skill Completed"))
+        badges.append(("🥉", "First Skill Completed"))
+
     if percentage >= 25:
-      badges.append(("🥈", "25% Complete"))
+        badges.append(("🥈", "25% Complete"))
+
     if percentage >= 50:
-      badges.append(("🥇", "50% Complete"))
+        badges.append(("🥇", "50% Complete"))
+
     if percentage >= 75:
-      badges.append(("💎", "75% Complete"))
+        badges.append(("💎", "75% Complete"))
+
     if percentage == 100:
-      badges.append(("👑", "AI Roadmap Master"))
+        badges.append(("👑", "AI Roadmap Master"))
+
     advisor = CareerAdvisor()
-    advice = advisor.generate_advice(user,
-    progress)
+
+    advice = advisor.generate_advice(
+        user,
+        progress
+    )
+
     current_hour = datetime.now().hour
 
     if current_hour < 12:
-       greeting = "☀️ Good Morning"
+        greeting = "☀️ Good Morning"
+
     elif current_hour < 17:
-      greeting = "🌤️ Good Afternoon"
+        greeting = "🌤️ Good Afternoon"
+
     else:
-       greeting = "🌙 Good Evening"
-    current_date = datetime.now().strftime("%A, %d %B %Y")
+        greeting = "🌙 Good Evening"
+
+    current_date = datetime.now().strftime(
+        "%A, %d %B %Y"
+    )
+
     return render_template(
         "dashboard.html",
         user=user,
         percentage=percentage,
         completed=completed,
-        total=total,advice=advice,greeting=greeting,
-        current_date=current_date,remaining=remaining,badges=badges,)
+        total=total,
+        advice=advice,
+        greeting=greeting,
+        current_date=current_date,
+        remaining=remaining,
+        badges=badges
+    )
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("home"))
 @app.route("/profile")
 def profile():
+
     if "user_id" not in session:
         return redirect(url_for("login"))
-    user = data_manager.load_user_by_id(session["user_id"])
+
+    user = get_current_user()
+
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
     return render_template(
         "profile.html",
         user=user
     )
-@app.route("/edit-profile", methods=["GET", "POST"])
-def edit_profile():
+@app.route("/change-password", methods=["GET","POST"])
+def change_password():
+
     if "user_id" not in session:
         return redirect(url_for("login"))
-    user = data_manager.load_user_by_id(session["user_id"])
-    careers = career_manager.get_careers()
+
+
+    user = get_current_user()
+
+    if user is None:
+      session.clear()
+      return redirect(url_for("login"))
+
+
     if request.method == "POST":
+
+        current_password = request.form["current_password"]
+        new_password = request.form["new_password"]
+        confirm_password = request.form["confirm_password"]
+
+
+        if not check_password_hash(
+            user.password,
+            current_password
+        ):
+            return render_template(
+                "change_password.html",
+                error="Current password is incorrect."
+            )
+
+
+        if new_password != confirm_password:
+            return render_template(
+                "change_password.html",
+                error="New passwords do not match."
+            )
+        if not is_strong_password(new_password):
+           return render_template(
+        "change_password.html",
+        error="Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.")
+
+        user.password = generate_password_hash(
+            new_password
+        )
+
+
+        data_manager.update_user(user)
+
+
+        return render_template(
+            "change_password.html",
+            success="Password updated successfully!"
+        )
+
+
+    return render_template(
+        "change_password.html"
+    )
+@app.route("/delete-account", methods=["GET", "POST"])
+def delete_account():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    user = get_current_user()
+
+    if user is None:
+     session.clear()
+     return redirect(url_for("login"))
+
+    if request.method == "POST":
+        
+        password = request.form["password"]
+
+        if not check_password_hash(
+            user.password,
+            password
+        ):
+
+            return render_template(
+                "delete_account.html",
+                error="Incorrect password."
+            )
+
+        data_manager.delete_progress(user.user_id)
+
+        data_manager.delete_user(user.user_id)
+
+        session.clear()
+
+        return render_template("index.html",
+        success="Your account has been deleted successfully.")
+
+    return render_template("delete_account.html")
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+
+    if request.method == "POST":
+
+        email = request.form["email"].strip().lower()
+
+        user = data_manager.load_user_by_email(email)
+
+        if not user:
+            return render_template(
+                "forgot_password.html",
+                error="No account found with this email."
+            )
+
+        reset_code = random.randint(100000, 999999)
+
+        user.verification_code = reset_code
+
+        data_manager.update_user(user)
+
+        msg = Message(
+            subject="Reset Your TechPath AI Password",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[email]
+        )
+
+        msg.body = f"""
+Hello {user.name},
+
+We received a request to reset your password.
+
+Your verification code is:
+
+{reset_code}
+
+If you did not request a password reset, you can safely ignore this email.
+Regards,
+TechPath AI Team
+"""
+
+        mail.send(msg)
+
+        session["reset_email"] = email
+
+        return redirect(url_for("reset_verify"))
+
+    return render_template("forgot_password.html")
+@app.route("/reset-verify", methods=["GET", "POST"])
+def reset_verify():
+
+    if "reset_email" not in session:
+        return redirect(url_for("forgot_password"))
+
+    email = session["reset_email"]
+    user = data_manager.load_user_by_email(email)
+
+    if request.method == "POST":
+
+        try:
+          code = int(request.form["code"])
+        except ValueError:
+         return render_template(
+        "reset_verify.html",
+        error="Enter numbers only.")
+
+        if code == user.verification_code:
+
+            session["reset_verified"] = True
+
+            return redirect(url_for("reset_password"))
+
+        else:
+
+            return render_template(
+                "reset_verify.html",
+                error="Invalid verification code."
+            )
+
+    return render_template("reset_verify.html")
+@app.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+
+    if "reset_verified" not in session:
+        return redirect(url_for("forgot_password"))
+
+    email = session["reset_email"]
+    user = data_manager.load_user_by_email(email)
+
+    if request.method == "POST":
+
+        password = request.form["password"]
+        confirm = request.form["confirm_password"]
+
+        if password != confirm:
+
+            return render_template(
+                "reset_password.html",
+                error="Passwords do not match."
+            )
+        if not is_strong_password(password):
+           return render_template(
+        "reset_password.html",
+        error="Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character." )
+        user.password = generate_password_hash(password)
+        user.verification_code = None
+
+        data_manager.update_user(user)
+
+        session.pop("reset_email", None)
+        session.pop("reset_verified", None)
+
+        return redirect(url_for("login"))
+
+    return render_template("reset_password.html")
+@app.route("/edit-profile", methods=["GET", "POST"])
+def edit_profile():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    user = get_current_user()
+
+    if user is None:
+     session.clear()
+     return redirect(url_for("login"))
+
+    careers = career_manager.get_careers()
+
+    if request.method == "POST":
+
         user.name = request.form["name"]
         user.age = int(request.form["age"])
         user.education = request.form["education"]
         user.study_hours = float(request.form["study_hours"])
         user.career_goal = request.form["career_goal"]
-        user.password = generate_password_hash(request.form["password"])
-        new_password = request.form["password"]
-        if new_password:
-           user.password = generate_password_hash(new_password)
+
+        # Keep old password unchanged
+        # Password changes only through change-password page
+
         data_manager.update_user(user)
 
         return redirect(url_for("profile"))
+
 
     return render_template(
         "edit_profile.html",
@@ -236,7 +639,11 @@ def roadmap():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user = data_manager.load_user_by_id(session["user_id"])
+    user = get_current_user()
+
+    if user is None:
+     session.clear()
+     return redirect(url_for("login"))
 
     roadmap = career_manager.generate_roadmap(
     user.career_goal)
@@ -297,8 +704,11 @@ def complete_skill(skill_name):
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user = data_manager.load_user_by_id(session["user_id"])
+    user = get_current_user()
 
+    if user is None:
+     session.clear()
+     return redirect(url_for("login"))
     roadmap = career_manager.generate_roadmap(
     user.career_goal)
     engine = RecommendationEngine()
@@ -315,7 +725,11 @@ def analytics():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user = data_manager.load_user_by_id(session["user_id"])
+    user = get_current_user()
+
+    if user is None:
+      session.clear()
+      return redirect(url_for("login"))
 
     roadmap = career_manager.generate_roadmap(
     user.career_goal)
@@ -347,6 +761,28 @@ def page_not_found(error):
 @app.errorhandler(500)
 def internal_error(error):
     return render_template("500.html"),500
+@app.route("/career/<career_name>")
+def career_preview(career_name):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    user = get_current_user()
+
+    if user is None:
+     session.clear()
+     return redirect(url_for("login"))
+
+    roadmap = career_manager.generate_roadmap(
+        career_name
+    )
+
+    return render_template(
+        "career_preview.html",
+        user=user,
+        career_name=career_name,
+        roadmap=roadmap
+    )
 # THIS MUST ALWAYS BE LAST 👇
 
 if __name__ == "__main__":

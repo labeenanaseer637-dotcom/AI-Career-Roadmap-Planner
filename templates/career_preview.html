@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+{{ career_name }} | TechPath AI
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<div class="container py-5">
+
+
+<div class="text-center mb-5">
+
+
+<span class="badge bg-primary rounded-pill px-3 py-2">
+
+🧭 Career Roadmap
+
+</span>
+
+
+<h1 class="display-4 fw-bold mt-3">
+
+{{ career_name }}
+
+</h1>
+
+
+<p class="lead text-muted">
+
+Your personalized learning journey toward becoming a
+{{ career_name }} professional.
+
+</p>
+
+
+</div>
+
+
+
+<div class="row g-4">
+
+
+{% for skill in roadmap %}
+
+
+<div class="col-md-4">
+
+
+<div class="card p-4 h-100">
+
+
+<h4 class="fw-bold">
+
+{{ skill.name }}
+
+</h4>
+
+
+<p class="text-muted">
+
+Category:
+{{ skill.category }}
+
+</p>
+
+
+<span class="badge bg-light text-dark">
+
+{{ skill.difficulty }}
+
+</span>
+
+
+</div>
+
+
+</div>
+
+
+{% endfor %}
+
+
+</div>
+
+
+
+<div class="text-center mt-5">
+
+
+<a href="{{ url_for('create_profile') }}"
+class="btn btn-primary btn-lg">
+
+
+Start This Roadmap 🚀
+
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+{% endblock %}

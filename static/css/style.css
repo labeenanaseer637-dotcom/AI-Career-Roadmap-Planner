@@ -1,38 +1,683 @@
+/* =========================================================
+   TECHPATH AI — LIGHT BLUE & MINT GREEN THEME
+   ========================================================= */
+
+
+/* ==============================
+   GLOBAL STYLING
+============================== */
+
 body {
 
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+
+    background: linear-gradient(
+        180deg,
+        #F0F9FF,
+        #F0FDFA
+    );
+
+    color: #164E63;
+
+    min-height: 100vh;
 
 }
 
 
-.card {
+/* Smooth scrolling */
 
-    border-radius: 15px;
+html {
 
-}
-
-
-
-.card:hover {
-
-    transform: translateY(-5px);
-
-    transition: 0.3s;
+    scroll-behavior: smooth;
 
 }
 
+
+/* ==============================
+   NAVBAR
+============================== */
+
+.navbar {
+
+    background: linear-gradient(
+        135deg,
+        #38BDF8,
+        #2DD4BF
+    );
+
+    padding: 15px 0;
+
+    box-shadow:
+        0 8px 25px rgba(14, 165, 233, 0.18);
+
+}
 
 
 .navbar-brand {
 
-    font-weight: bold;
+    font-size: 1.5rem;
+
+    font-weight: 800;
+
+    color: white !important;
 
 }
 
 
+.nav-link {
+
+    color: white !important;
+
+    font-weight: 600;
+
+    padding: 10px 15px !important;
+
+    border-radius: 12px;
+
+    transition: .3s;
+
+}
+
+
+.nav-link:hover {
+
+    background:
+        rgba(255, 255, 255, 0.20);
+
+    color: white !important;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* ==============================
+   HERO SECTION
+============================== */
+
+.hero {
+
+    padding: 100px 0;
+
+}
+
+
+.hero h1 {
+
+    font-size: 3.5rem;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    background:
+        linear-gradient(
+            90deg,
+            #0EA5E9,
+            #14B8A6
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+}
+
+
+.hero p {
+
+    font-size: 1.15rem;
+
+    line-height: 1.8;
+
+    color: #475569;
+
+}
+
+
+/* ==============================
+   CARDS
+============================== */
+
+.card {
+
+    border: none;
+
+    border-radius: 22px;
+
+    background: white;
+
+    box-shadow:
+        0 12px 30px rgba(14, 165, 233, 0.08);
+
+    transition: .35s;
+
+}
+
+
+.card:hover {
+
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 20px 45px rgba(14, 165, 233, 0.15);
+
+}
+
+
+/* ==============================
+   BUTTONS
+============================== */
 
 .btn {
 
+    border-radius: 14px;
+
+    font-weight: 600;
+
+    padding: 10px 22px;
+
+    transition: .3s;
+
+}
+
+
+.btn:hover {
+
+    transform: translateY(-3px);
+
+}
+
+
+/* Main Bootstrap primary button */
+
+.btn-primary {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0EA5E9,
+            #14B8A6
+        );
+
+    border: none;
+
+    color: white;
+
+}
+
+
+.btn-primary:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0284C7,
+            #0F766E
+        );
+
+    color: white;
+
+}
+
+
+/* Outline primary */
+
+.btn-outline-primary {
+
+    border: 2px solid #0EA5E9;
+
+    color: #0284C7;
+
+}
+
+
+.btn-outline-primary:hover {
+
+    background: #0EA5E9;
+
+    border-color: #0EA5E9;
+
+    color: white;
+
+}
+
+
+/* ==============================
+   LINKS
+============================== */
+
+a {
+
+    color: #0284C7;
+
+}
+
+
+a:hover {
+
+    color: #0F766E;
+
+}
+
+
+/* ==============================
+   BADGES
+============================== */
+
+.badge {
+
+    font-weight: 600;
+
+}
+
+
+/* ==============================
+   ACCORDION FAQ
+============================== */
+
+.accordion-button {
+
+    font-weight: 600;
+
+    padding: 20px;
+
+}
+
+
+.accordion-button:not(.collapsed) {
+
+    background: #E0F7FA;
+
+    color: #0F766E;
+
+    box-shadow: none;
+
+}
+
+
+.accordion-button:focus {
+
+    box-shadow:
+        0 0 0 0.2rem rgba(14, 165, 233, 0.15);
+
+}
+
+
+/* ==============================
+   FOOTER
+============================== */
+
+footer {
+
+    background:
+        linear-gradient(
+            135deg,
+            #164E63,
+            #134E4A
+        );
+
+    color: white;
+
+}
+
+
+footer p {
+
+    color: #CCFBF1;
+
+}
+
+
+footer a {
+
+    color: #BAE6FD;
+
+    text-decoration: none;
+
+}
+
+
+footer a:hover {
+
+    color: white;
+
+}
+
+
+/* ==============================
+   ANIMATIONS
+============================== */
+
+@keyframes float {
+
+    0%, 100% {
+
+        transform: translateY(0);
+
+    }
+
+    50% {
+
+        transform: translateY(-10px);
+
+    }
+
+}
+
+
+.tech-card {
+
+    animation: float 3s infinite;
+
+}
+
+
+/* ==============================
+   HERO FLOATING TECHNOLOGY
+============================== */
+
+.career-orbit {
+
+    position: relative;
+
+    width: 360px;
+
+    height: 360px;
+
+    margin: auto;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(56, 189, 248, .15),
+            rgba(45, 212, 191, .15)
+        );
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.center-logo {
+
+    width: 120px;
+
+    height: 120px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 55px;
+
+    box-shadow:
+        0 20px 40px rgba(14, 165, 233, .15);
+
+}
+
+
+.floating-tech {
+
+    position: absolute;
+
+    background: white;
+
+    padding: 14px 20px;
+
     border-radius: 20px;
+
+    font-weight: 700;
+
+    color: #155E75;
+
+    box-shadow:
+        0 10px 25px rgba(14, 165, 233, .12);
+
+    animation: float 3s infinite;
+
+}
+
+
+/* Floating technology positions */
+
+.ai {
+
+    top: 20px;
+
+    left: 130px;
+
+}
+
+
+.web {
+
+    right: -20px;
+
+    top: 120px;
+
+}
+
+
+.cloud {
+
+    bottom: 40px;
+
+    right: 30px;
+
+}
+
+
+.data {
+
+    bottom: 40px;
+
+    left: 30px;
+
+}
+
+
+.security {
+
+    left: -30px;
+
+    top: 120px;
+
+}
+
+
+.design {
+
+    right: 130px;
+
+    bottom: 120px;
+
+}
+
+
+/* ==============================
+   FORM ELEMENTS
+============================== */
+
+.form-control,
+.form-select {
+
+    border-radius: 12px;
+
+    border: 1px solid #BAE6FD;
+
+    padding: 11px 14px;
+
+}
+
+
+.form-control:focus,
+.form-select:focus {
+
+    border-color: #38BDF8;
+
+    box-shadow:
+        0 0 0 0.2rem rgba(56, 189, 248, 0.15);
+
+}
+
+
+/* ==============================
+   INPUT GROUP
+============================== */
+
+.input-group-text {
+
+    background: #F0F9FF;
+
+    border-color: #BAE6FD;
+
+    color: #0284C7;
+
+}
+
+
+/* ==============================
+   ALERTS
+============================== */
+
+.alert {
+
+    border-radius: 14px;
+
+}
+
+
+.alert-success {
+
+    background: #ECFDF5;
+
+    border-color: #A7F3D0;
+
+    color: #065F46;
+
+}
+
+
+/* ==============================
+   PROGRESS BAR
+============================== */
+
+.progress {
+
+    height: 12px;
+
+    border-radius: 20px;
+
+    background: #E0F2FE;
+
+}
+
+
+.progress-bar {
+
+    background:
+        linear-gradient(
+            90deg,
+            #38BDF8,
+            #2DD4BF
+        );
+
+    border-radius: 20px;
+
+}
+
+
+/* ==============================
+   TABLES
+============================== */
+
+.table {
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+}
+
+
+.table thead {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0EA5E9,
+            #14B8A6
+        );
+
+    color: white;
+
+}
+
+
+.table tbody tr:hover {
+
+    background: #F0FDFA;
+
+}
+
+
+/* ==============================
+   RESPONSIVE
+============================== */
+
+@media(max-width: 768px) {
+
+    .hero {
+
+        padding: 50px 0;
+
+    }
+
+
+    .hero h1 {
+
+        font-size: 2.3rem;
+
+    }
+
+
+    .nav-link {
+
+        margin-top: 8px;
+
+    }
+
+
+    .career-orbit {
+
+        width: 280px;
+
+        height: 280px;
+
+    }
+
+
+    .center-logo {
+
+        width: 95px;
+
+        height: 95px;
+
+        font-size: 42px;
+
+    }
 
 }

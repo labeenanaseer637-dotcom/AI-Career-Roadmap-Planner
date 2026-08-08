@@ -57,21 +57,31 @@ class DataManager:
         return users
     def get_next_id(self):
       self.create_file_if_not_exists()
-      with open(self.file_name, "r", newline="") as file:
+
+      ids = []
+
+      with open(self.file_name, "r", newline="", encoding="utf-8-sig") as file:
         reader = csv.DictReader(file)
-        ids = []
+
         for row in reader:
-            user_id = row["user_id"].strip()
-            if not user_id:
-                continue
+
+            user_id = row.get("user_id", "").strip()
+
             if user_id.startswith("AI"):
+
                 try:
                     number = int(user_id[2:])
                     ids.append(number)
+
                 except ValueError:
-                    continue
+                    pass
+
         next_id = max(ids) + 1 if ids else 1
-        return f"AI{next_id:03d}"
+
+        new_id = f"AI{next_id:03d}"
+ 
+        print("🆕 GENERATED USER ID:", new_id)
+        return new_id
     def save_progress(self, user_id, roadmap):
       with open("data/progress.csv", "w", newline="") as file:
         writer = csv.writer(file)
@@ -96,13 +106,25 @@ class DataManager:
           pass
         return progress            
     def load_user_by_id(self, user_id):
-       self.create_file_if_not_exists()
-       with open(self.file_name, "r", newline="") as file:
-          reader = csv.DictReader(file)
-          for row in reader:
-            if row["user_id"] == user_id:
+     self.create_file_if_not_exists()
+
+     print("🔎 Looking for USER ID:", repr(user_id))
+
+     with open(self.file_name, "r", newline="", encoding="utf-8-sig") as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            stored_id = row["user_id"].strip()
+
+            print("📁 Stored USER ID:", repr(stored_id))
+
+            if stored_id == str(user_id).strip():
+
+                print("✅ USER FOUND:", stored_id)
+
                 return User(
-                    row["user_id"],
+                    row["user_id"].strip(),
                     row["name"],
                     int(row["age"]),
                     row["education"],
@@ -112,10 +134,15 @@ class DataManager:
                     row["current_level"],
                     row["programming_experience"],
                     row["interests"],
-                    row["learning_style"], row["email"],
+                    row["learning_style"],
+                    row["email"],
                     row["verified"] == "True",
-                    int(row["verification_code"]) if row["verification_code"] else None)
-          return None  
+                    int(row["verification_code"])
+                    if row["verification_code"] else None
+                )
+
+     print("❌ USER NOT FOUND:", repr(user_id))
+     return None  
     def load_user_by_credentials(self, name, password):
       with open(self.file_name, "r", newline="") as file:
         reader = csv.DictReader(file)
@@ -196,6 +223,96 @@ class DataManager:
 
             if row["email"] == email:
 
-                return row
+                return User(
+                    row["user_id"],
+                    row["name"],
+                    int(row["age"]),
+                    row["education"],
+                    row["career_goal"],
+                    float(row["study_hours"]),
+                    row["password"],
+                    row["current_level"],
+                    row["programming_experience"],
+                    row["interests"],
+                    row["learning_style"],
+                    row["email"],
+                    row["verified"] == "True",
+                    int(row["verification_code"]) if row["verification_code"] else None
+                )
 
-     return None
+        return None
+    def delete_user(self, user_id):
+
+     users = []
+
+     with open(self.file_name, "r", newline="") as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            if row["user_id"] != str(user_id):
+
+                users.append(row)
+
+     with open(self.file_name, "w", newline="") as file:
+
+        writer = csv.DictWriter(file, fieldnames=self.fields)
+
+        writer.writeheader()
+
+        writer.writerows(users)
+
+    def delete_progress(self, user_id):
+
+     progress_file = "data/progress.csv"
+
+     if not os.path.exists(progress_file):
+        return
+
+     rows = []
+
+     with open(
+        progress_file,
+        "r",
+        newline="",
+        encoding="utf-8-sig"
+    ) as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            if row.get("user_id", "").strip() != str(user_id).strip():
+                rows.append(row)
+
+     with open(
+        progress_file,
+        "w",
+        newline="",
+        encoding="utf-8"
+    ) as file:
+
+        fieldnames = [
+            "user_id",
+            "skill_name",
+            "completed"
+        ]
+
+        writer = csv.DictWriter(
+            file,
+            fieldnames=fieldnames
+        )
+
+        writer.writeheader()
+
+        for row in rows:
+
+            writer.writerow({
+                "user_id": row.get("user_id", ""),
+                "skill_name": row.get(
+                    "skill_name",
+                    row.get("skill", "")
+                ),
+                "completed": row.get("completed", "")
+            })

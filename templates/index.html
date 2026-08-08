@@ -1,858 +1,979 @@
 {% extends "base.html" %}
 
-
 {% block title %}
-AI Career Roadmap Planner
+TechPath AI | Build Your Future
 {% endblock %}
 
-
-
 {% block content %}
-
-
-
-<style>
-
-.hero-section{
-
-    background:linear-gradient(135deg,#4F46E5,#7C3AED);
-
-    color:white;
-
-    border-radius:30px;
-
-}
-
-
-.feature-card{
-
-    border:none;
-
-    border-radius:20px;
-
-    transition:.3s;
-
-}
-
-
-.feature-card:hover{
-
-    transform:translateY(-8px);
-
-}
-
-
-
-.icon-box{
-
-    font-size:50px;
-
-}
-
-
-
-.step-card{
-
-    border:none;
-
-    border-radius:20px;
-
-    background:#f8fafc;
-
-}
-
-
-
-</style>
-
-
-
-
-
-<div class="container mt-5">
-
-
-
-<!-- HERO SECTION -->
-
-
-<div class="card hero-section shadow-lg">
-
-
-<div class="card-body p-5">
-
+{% if success %}
+<div class="alert alert-success alert-dismissible fade show shadow rounded-4 mb-4">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <strong>Success!</strong> {{ success }}
+    <button class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+<section class="py-5">
 
 <div class="row align-items-center">
 
+<div class="col-lg-6">
 
+<span class="badge rounded-pill bg-primary px-3 py-2 mb-3 fs-6">
+🧭 Personalized Technology Career Platform
+</span>
 
-<div class="col-md-7">
+<h1 class="display-3 fw-bold mb-4">
 
+Build Your
 
-<h1 class="display-4 fw-bold">
+<span class="text-primary">
 
-Build Your Future in Artificial Intelligence 🚀
+Dream Tech Career
+
+</span>
+
+with
+
+<span style="color:#7C3AED;">
+TechPath AI
+</span>
 
 </h1>
 
+<p class="lead text-muted mb-4">
 
+TechPath AI is your intelligent career companion that helps you discover
+personalized learning roadmaps for today's most in-demand technology fields.
 
-<p class="fs-5 mt-3">
-
-
-AI Career Roadmap Planner helps students create personalized AI learning paths,
-track skills, analyze progress, and achieve career goals step by step.
-
+Whether you want to become an AI Engineer, Web Developer,
+Data Scientist, Cybersecurity Expert, Cloud Engineer, UI/UX Designer,
+or Mobile App Developer—we'll guide you step by step.
 
 </p>
 
-
-
-<div class="mt-4">
-
+<div class="d-flex flex-wrap gap-3">
 
 <a href="{{ url_for('create_profile') }}"
-
-class="btn btn-light btn-lg me-2">
-
+class="btn btn-primary btn-lg px-4">
 
 <i class="bi bi-rocket-takeoff-fill me-2"></i>
 
 Start Your Journey
 
-
 </a>
 
-
-
 <a href="{{ url_for('login') }}"
+class="btn btn-outline-primary btn-lg px-4">
 
-class="btn btn-outline-light btn-lg">
-
+<i class="bi bi-box-arrow-in-right me-2"></i>
 
 Login
 
-
 </a>
 
-
 </div>
 
+<div class="row mt-5 text-center">
 
+<div class="col-4">
 
-</div>
-
-
-
-
-
-<div class="col-md-5 text-center">
-
-
-<div style="font-size:130px;">
-
-🧠
-
-</div>
-
-
-<p class="fs-4">
-
-AI + Career + Learning
-
-</p>
-
-
-</div>
-
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-<!-- FEATURES -->
-
-
-<h2 class="text-center mt-5 mb-4">
-
-✨ Powerful Features
-
+<h2 class="fw-bold text-primary">
+8+
 </h2>
 
-
-
-
-<div class="row g-4">
-
-
-
-<div class="col-md-4">
-
-
-<div class="card feature-card shadow-sm h-100">
-
-
-<div class="card-body text-center p-4">
-
-
-<div class="icon-box">
-
-🎯
-
-</div>
-
-
-<h4 class="mt-3">
-
-Personalized Roadmaps
-
-</h4>
-
-
-
 <p class="text-muted">
-
-Generate career-specific learning paths based on your goals.
-
+Career Paths
 </p>
 
-
 </div>
 
+<div class="col-4">
 
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="col-md-4">
-
-
-<div class="card feature-card shadow-sm h-100">
-
-
-<div class="card-body text-center p-4">
-
-
-<div class="icon-box">
-
-📊
-
-</div>
-
-
-<h4 class="mt-3">
-
-Progress Tracking
-
-</h4>
-
-
-
-<p class="text-muted">
-
-Monitor completed skills and measure your improvement.
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-<div class="col-md-4">
-
-
-<div class="card feature-card shadow-sm h-100">
-
-
-<div class="card-body text-center p-4">
-
-
-<div class="icon-box">
-
-🤖
-
-</div>
-
-
-<h4 class="mt-3">
-
-AI Career Advisor
-
-</h4>
-
-
-
-<p class="text-muted">
-
-Receive recommendations based on your learning profile.
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-<!-- HOW IT WORKS -->
-
-
-<h2 class="text-center mt-5 mb-4">
-
-⚡ How It Works
-
+<h2 class="fw-bold text-primary">
+100+
 </h2>
 
-
-
-<div class="row g-4">
-
-
-
-<div class="col-md-4">
-
-<div class="card step-card shadow-sm h-100">
-
-
-<div class="card-body text-center">
-
-
-<h1 class="text-primary">
-
-1
-
-</h1>
-
-
-<h5>
-
-Create Profile
-
-</h5>
-
-
-<p>
-
-Tell us your goals, skills and interests.
-
+<p class="text-muted">
+Skills
 </p>
 
-
 </div>
 
-</div>
+<div class="col-4">
 
-</div>
+<h2 class="fw-bold text-primary">
+∞
+</h2>
 
-
-
-
-
-
-<div class="col-md-4">
-
-<div class="card step-card shadow-sm h-100">
-
-
-<div class="card-body text-center">
-
-
-<h1 class="text-success">
-
-2
-
-</h1>
-
-
-<h5>
-
-Generate Roadmap
-
-</h5>
-
-
-<p>
-
-Get a customized AI career learning path.
-
+<p class="text-muted">
+Learning
 </p>
 
-
 </div>
 
 </div>
 
 </div>
 
+<div class="col-lg-6">
 
-
-
-
-
-
-<div class="col-md-4">
-
-<div class="card step-card shadow-sm h-100">
-
-
-<div class="card-body text-center">
-
-
-<h1 class="text-warning">
-
-3
-
-</h1>
-
-
-<h5>
-
-Track Growth
-
-</h5>
-
-
-<p>
-
-Complete skills and analyze progress.
-
-</p>
-
-
-</div>
-
-</div>
-
-</div>
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- TECH STACK -->
-
-
-<div class="card shadow-sm mt-5 mb-5 rounded-4">
-
-
-<div class="card-body text-center p-4">
-
-
-<h3>
-
-🛠 Built With
-
-</h3>
-
-
-<div class="mt-3">
-
-
-<span class="badge bg-primary fs-6 m-1">
-
-Python
-
-</span>
-
-
-<span class="badge bg-success fs-6 m-1">
-
-Flask
-
-</span>
-
-
-<span class="badge bg-warning text-dark fs-6 m-1">
-
-Bootstrap
-
-</span>
-
-
-<span class="badge bg-info fs-6 m-1">
-
-AI Recommendation System
-
-</span>
-
-
-<span class="badge bg-dark fs-6 m-1">
-
-Data Analytics
-
-</span>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-<!-- PROJECT OVERVIEW -->
-
-<div class="card shadow-lg rounded-4 mt-5 mb-5">
-
+<div class="card border-0 shadow-lg rounded-5">
 
 <div class="card-body p-5">
 
+<h3 class="fw-bold mb-4 text-center">
 
-<div class="row align-items-center">
+🚀 Explore Technology Careers
 
+</h3>
 
+<div class="row g-3">
 
-<div class="col-md-8">
+<div class="col-6">
+<div class="p-3 rounded-4 bg-light text-center">
+🤖<br>
+<strong>Artificial Intelligence</strong>
+</div>
+</div>
 
+<div class="col-6">
+<div class="p-3 rounded-4 bg-light text-center">
+🌐<br>
+<strong>Web Development</strong>
+</div>
+</div>
 
-<h2 class="fw-bold text-primary">
+<div class="col-6">
+<div class="p-3 rounded-4 bg-light text-center">
+📊<br>
+<strong>Data Science</strong>
+</div>
+</div>
 
-🚀 About AI Career Roadmap Planner
+<div class="col-6">
+<div class="p-3 rounded-4 bg-light text-center">
+☁️<br>
+<strong>Cloud Computing</strong>
+</div>
+</div>
 
-</h2>
+<div class="col-6">
+<div class="p-3 rounded-4 bg-light text-center">
+🛡️<br>
+<strong>Cybersecurity</strong>
+</div>
+</div>
 
-
-<p class="mt-3 fs-5">
-
-
-AI Career Roadmap Planner is an intelligent career guidance platform
-designed to help students plan their journey in Artificial Intelligence.
-
-
-</p>
-
-
-
-<p class="text-muted">
-
-
-The system analyzes user goals, education level, programming experience,
-and interests to generate a personalized learning roadmap.
-Users can track completed skills, analyze progress, and receive AI-based
-career recommendations.
-
-
-</p>
-
-
+<div class="col-6">
+<div class="p-3 rounded-4 bg-light text-center">
+🎨<br>
+<strong>UI / UX Design</strong>
+</div>
+</div>
 
 </div>
 
-
-
-
-<div class="col-md-4 text-center">
-
-
-<div style="font-size:90px;">
-
-🧠🤖
+</div>
 
 </div>
 
+</div>
 
 </div>
 
+</section>
+<!-- ==========================
+     WHY CHOOSE TECHPATH AI
+========================== -->
 
+<section class="py-5">
 
-</div>
+    <div class="text-center mb-5">
 
+        <span class="badge bg-primary px-3 py-2 rounded-pill mb-3">
+            Why Choose TechPath AI?
+        </span>
 
-</div>
+        <h2 class="fw-bold display-5">
+            Everything You Need to Plan Your
+            <span class="text-primary">Technology Career</span>
+        </h2>
 
+        <p class="text-muted fs-5 mt-3">
+            TechPath AI combines personalized learning, progress tracking,
+            career guidance, and analytics to help you achieve your goals.
+        </p>
 
-</div>
-<!-- PROJECT SCREENSHOTS -->
+    </div>
 
+    <div class="row g-4">
 
-<h2 class="text-center mt-5 mb-4">
+        <div class="col-md-6 col-lg-4">
 
-📸 Project Preview
+            <div class="card h-100 shadow-sm rounded-4 text-center p-4">
 
-</h2>
+                <div class="display-4 mb-3">🧭</div>
 
+                <h4 class="fw-bold">
+                    Personalized Roadmaps
+                </h4>
 
+                <p class="text-muted">
+                    Receive customized learning paths based on your career goal,
+                    education level, and experience.
+                </p>
 
-<div class="row g-4 mb-5">
+            </div>
 
+        </div>
 
+        <div class="col-md-6 col-lg-4">
 
-<div class="col-md-6">
+            <div class="card h-100 shadow-sm rounded-4 text-center p-4">
 
+                <div class="display-4 mb-3">📈</div>
 
-<div class="card shadow-sm rounded-4 overflow-hidden">
+                <h4 class="fw-bold">
+                    Progress Tracking
+                </h4>
 
+                <p class="text-muted">
+                    Track completed skills, monitor your growth,
+                    and stay motivated throughout your learning journey.
+                </p>
 
-<img 
-src="{{ url_for('static', filename='images/dashboard.png') }}"
-class="img-fluid">
+            </div>
 
+        </div>
 
-<div class="card-body text-center">
+        <div class="col-md-6 col-lg-4">
 
-<h5>
+            <div class="card h-100 shadow-sm rounded-4 text-center p-4">
 
-📊 Dashboard
+                <div class="display-4 mb-3">🤖</div>
 
-</h5>
+                <h4 class="fw-bold">
+                    Smart Career Advisor
+                </h4>
 
-<p class="text-muted">
+                <p class="text-muted">
+                    Receive intelligent recommendations that help you choose
+                    what to learn next.
+                </p>
 
-Track your AI learning progress.
+            </div>
 
-</p>
+        </div>
 
-</div>
+        <div class="col-md-6 col-lg-4">
 
+            <div class="card h-100 shadow-sm rounded-4 text-center p-4">
 
-</div>
+                <div class="display-4 mb-3">🏆</div>
 
+                <h4 class="fw-bold">
+                    Achievement Badges
+                </h4>
 
-</div>
+                <p class="text-muted">
+                    Unlock milestones and celebrate your learning progress
+                    as you complete roadmap skills.
+                </p>
 
+            </div>
 
+        </div>
 
+        <div class="col-md-6 col-lg-4">
 
+            <div class="card h-100 shadow-sm rounded-4 text-center p-4">
 
-<div class="col-md-6">
+                <div class="display-4 mb-3">📊</div>
 
+                <h4 class="fw-bold">
+                    Learning Analytics
+                </h4>
 
-<div class="card shadow-sm rounded-4 overflow-hidden">
+                <p class="text-muted">
+                    Visualize your progress using interactive charts
+                    and detailed learning statistics.
+                </p>
 
+            </div>
 
-<img 
-src="{{ url_for('static', filename='images/roadmap.png') }}"
-class="img-fluid">
+        </div>
 
+        <div class="col-md-6 col-lg-4">
 
-<div class="card-body text-center">
+            <div class="card h-100 shadow-sm rounded-4 text-center p-4">
 
+                <div class="display-4 mb-3">🚀</div>
 
-<h5>
+                <h4 class="fw-bold">
+                    Career Growth
+                </h4>
 
-🛣 Career Roadmap
+                <p class="text-muted">
+                    Stay focused with structured roadmaps that prepare
+                    you for real-world technology careers.
+                </p>
 
-</h5>
+            </div>
 
+        </div>
 
-<p class="text-muted">
+    </div>
 
-Follow your personalized learning path.
+</section>
+<!-- ==========================
+     EXPLORE CAREER PATHS
+========================== -->
 
-</p>
+<section class="py-5">
 
+    <div class="text-center mb-5">
 
-</div>
+        <span class="badge bg-success px-3 py-2 rounded-pill mb-3">
+            Explore Career Paths
+        </span>
 
+        <h2 class="display-5 fw-bold">
+            Discover Your
+            <span class="text-primary">
+                Dream Technology Career
+            </span>
+        </h2>
 
-</div>
+        <p class="text-muted fs-5 mt-3">
+            Whether you're a beginner or an experienced learner,
+            TechPath AI helps you choose the right learning path
+            for your future career.
+        </p>
 
+    </div>
 
-</div>
+    <div class="row g-4">
 
+        <div class="col-md-6 col-lg-3">
 
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
 
+                <div class="display-3 mb-3">🤖</div>
 
+                <h4 class="fw-bold">
+                    Artificial Intelligence
+                </h4>
+                <a href="{{ url_for('career_preview',
+                   career_name='Artificial Intelligence') }}"
+                   class="btn btn-outline-primary mt-3">
 
-
-<div class="col-md-6">
-
-
-<div class="card shadow-sm rounded-4 overflow-hidden">
-
-
-<img 
-src="{{ url_for('static', filename='images/analytics.png') }}"
-class="img-fluid">
-
-
-<div class="card-body text-center">
-
-
-<h5>
-
-📈 Analytics Dashboard
-
-</h5>
-
-
-<p class="text-muted">
-
-Visualize your skill progress.
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-<div class="col-md-6">
-
-
-<div class="card shadow-sm rounded-4 overflow-hidden">
-
-
-<img 
-src="{{ url_for('static', filename='images/profile.png') }}"
-class="img-fluid">
-
-
-<div class="card-body text-center">
-
-
-<h5>
-
-👤 User Profile
-
-</h5>
-
-
-<p class="text-muted">
-
-Manage your career information.
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-<!-- DEVELOPER SECTION -->
-
-
-<div class="card rounded-4 shadow-sm mb-5">
-
-
-<div class="card-body text-center p-5">
-
-
-<h2 class="fw-bold">
-
-👩‍💻 Developer
-
-</h2>
-
-
-
-<h4 class="text-primary mt-3">
-
-Beena Naseer
-
-</h4>
-
-
-
-<p class="text-muted">
-
-BS Artificial Intelligence Student  
-<br>
-Developer of AI Career Roadmap Planner
-
-</p>
-
-
-
-<div>
-
-
-<a href="#"
-
-class="btn btn-dark me-2">
-
-<i class="bi bi-github"></i>
-
-GitHub
+                  Explore Roadmap
 
 </a>
 
+                <p class="text-muted">
+                    Learn Machine Learning, Deep Learning,
+                    Computer Vision and NLP.
+                </p>
 
+            </div>
 
-<a href="#"
+        </div>
 
-class="btn btn-primary">
+        <div class="col-md-6 col-lg-3">
 
-<i class="bi bi-linkedin"></i>
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
 
-LinkedIn
+                <div class="display-3 mb-3">🌐</div>
 
-</a>
+                <h4 class="fw-bold">
+                    Web Development
+                </h4>
+                <a href="{{ url_for('career_preview',
+                   career_name='Web Development') }}"
+                   class="btn btn-outline-primary mt-3">
 
+                  Explore Roadmap
+                </a>
+                <p class="text-muted">
+                    Master HTML, CSS, JavaScript,
+                    React, Flask and Full Stack Development.
+                </p>
 
-</div>
+            </div>
 
+        </div>
 
-</div>
+        <div class="col-md-6 col-lg-3">
 
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
 
-</div>
+                <div class="display-3 mb-3">📊</div>
+
+                <h4 class="fw-bold">
+                    Data Science
+                </h4>
+                 <a href="{{ url_for('career_preview',
+                   career_name='Data Science') }}"
+                   class="btn btn-outline-primary mt-3">
+
+                  Explore Roadmap
+                </a>
+                <p class="text-muted">
+                    Explore Data Analysis,
+                    Visualization, Statistics and Python.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
+
+                <div class="display-3 mb-3">☁️</div>
+
+                <h4 class="fw-bold">
+                    Cloud Computing
+                </h4>
+                 <a href="{{ url_for('career_preview', 
+                   career_name='Cloud Computing') }}"
+                   class="btn btn-outline-primary mt-3">
+
+                  Explore Roadmap
+                   
+                <p class="text-muted">
+                    Learn AWS, Azure,
+                    Google Cloud and DevOps practices.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
+
+                <div class="display-3 mb-3">🛡️</div>
+
+                <h4 class="fw-bold">
+                    Cybersecurity
+                </h4>
+                  <a href="{{ url_for('career_preview', 
+                   career_name='Cybersecurity') }}"
+                   class="btn btn-outline-primary mt-3">
+                   
+                <p class="text-muted">
+                    Understand Ethical Hacking,
+                    Network Security and Digital Defense.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
+
+                <div class="display-3 mb-3">🎨</div>
+
+                <h4 class="fw-bold">
+                    UI / UX Design
+                </h4>
+                  <a href="{{ url_for('career_preview', 
+                   career_name='UI / UX Design') }}"
+                   class="btn btn-outline-primary mt-3">
+                <p class="text-muted">
+                    Design beautiful,
+                    user-friendly and interactive digital experiences.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
+
+                <div class="display-3 mb-3">📱</div>
+
+                <h4 class="fw-bold">
+                    Mobile Development
+                </h4>
+                 <a href="{{ url_for('career_preview',
+                    career_name ='Mobile Development') }}"
+                   class="btn btn-outline-primary mt-3">
+
+                  Explore Roadmap
+                </a>
+                <p class="text-muted">
+                    Build Android and iOS applications
+                    using modern frameworks.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card h-100 text-center shadow-sm rounded-4 p-4">
+
+                <div class="display-3 mb-3">⚙️</div>
+
+                <h4 class="fw-bold">
+                    DevOps
+                </h4>
+                    <a href="{{ url_for('career_preview',
+                        career_name ='DevOps') }}"
+                    class="btn btn-outline-primary mt-3">
+    
+                    Explore Roadmap
+                <p class="text-muted">
+                    Learn CI/CD,
+                    Docker, Kubernetes and deployment automation.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ==========================
+     HOW IT WORKS
+========================== -->
+
+<section class="py-5">
+
+    <div class="text-center mb-5">
+
+        <span class="badge bg-primary px-3 py-2 rounded-pill mb-3">
+            Simple Process
+        </span>
+
+        <h2 class="display-5 fw-bold">
+            How
+            <span class="text-primary">
+                TechPath AI
+            </span>
+            Works
+        </h2>
+
+        <p class="text-muted fs-5">
+            Your technology learning journey begins in just four simple steps.
+        </p>
+
+    </div>
+
+    <div class="row text-center g-4">
+
+        <div class="col-md-3">
+
+            <div class="card h-100 p-4 rounded-4">
+
+                <div class="display-3 mb-3">
+                    👤
+                </div>
+
+                <h4 class="fw-bold">
+                    Create Profile
+                </h4>
+                 
+                <p class="text-muted">
+                    Create your account and tell us about your education,
+                    experience and interests.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100 p-4 rounded-4">
+
+                <div class="display-3 mb-3">
+                    🎯
+                </div>
+
+                <h4 class="fw-bold">
+                    Select Career
+                </h4>
+
+                <p class="text-muted">
+                    Choose the technology field you want to master,
+                    from AI to Web Development and beyond.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100 p-4 rounded-4">
+
+                <div class="display-3 mb-3">
+                    🧭
+                </div>
+
+                <h4 class="fw-bold">
+                    Get Your Roadmap
+                </h4>
+
+                <p class="text-muted">
+                    Receive a personalized roadmap with carefully
+                    organized skills and learning milestones.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100 p-4 rounded-4">
+
+                <div class="display-3 mb-3">
+                    🚀
+                </div>
+
+                <h4 class="fw-bold">
+                    Track Progress
+                </h4>
+
+                <p class="text-muted">
+                    Complete skills, unlock achievements,
+                    and stay motivated throughout your journey.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ==========================
+     WHY STUDENTS LOVE TECHPATH AI
+========================== -->
+
+<section class="py-5">
+
+    <div class="text-center mb-5">
+
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-3">
+            Trusted Learning Platform
+        </span>
+
+        <h2 class="display-5 fw-bold">
+            Why Students Love
+            <span class="text-primary">
+                TechPath AI
+            </span>
+        </h2>
+
+        <p class="text-muted fs-5">
+            Everything you need to plan, learn, and grow in your technology career.
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+
+            <div class="card text-center p-4 h-100 rounded-4">
+
+                <div class="display-4 mb-3">🎯</div>
+
+                <h2 class="fw-bold text-primary">
+                    10+
+                </h2>
+
+                <h5 class="fw-semibold">
+                    Career Paths
+                </h5>
+
+                <p class="text-muted">
+                    Explore multiple technology careers from one platform.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card text-center p-4 h-100 rounded-4">
+
+                <div class="display-4 mb-3">📚</div>
+
+                <h2 class="fw-bold text-success">
+                    100+
+                </h2>
+
+                <h5 class="fw-semibold">
+                    Skills Covered
+                </h5>
+
+                <p class="text-muted">
+                    Learn step-by-step through carefully organized roadmaps.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card text-center p-4 h-100 rounded-4">
+
+                <div class="display-4 mb-3">📈</div>
+
+                <h2 class="fw-bold text-danger">
+                    100%
+                </h2>
+
+                <h5 class="fw-semibold">
+                    Progress Tracking
+                </h5>
+
+                <p class="text-muted">
+                    Monitor your completed skills and stay motivated.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card text-center p-4 h-100 rounded-4">
+
+                <div class="display-4 mb-3">🤖</div>
+
+                <h2 class="fw-bold text-warning">
+                    AI
+                </h2>
+
+                <h5 class="fw-semibold">
+                    Smart Guidance
+                </h5>
+
+                <p class="text-muted">
+                    Receive personalized recommendations based on your profile.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ==========================
+     FREQUENTLY ASKED QUESTIONS
+========================== -->
+
+<section class="py-5">
+
+    <div class="text-center mb-5">
+
+        <span class="badge bg-info text-dark px-3 py-2 rounded-pill mb-3">
+            Frequently Asked Questions
+        </span>
+
+        <h2 class="display-5 fw-bold">
+            Got Questions?
+            <span class="text-primary">
+                We've Got Answers
+            </span>
+        </h2>
+
+        <p class="text-muted fs-5">
+            Everything you need to know before starting your learning journey.
+        </p>
+
+    </div>
+
+    <div class="accordion" id="faqAccordion">
+
+        <div class="accordion-item rounded-4 mb-3 border-0 shadow-sm">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button rounded-4"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#faq1">
+
+                    What is TechPath AI?
+
+                </button>
+
+            </h2>
+
+            <div id="faq1"
+                 class="accordion-collapse collapse show"
+                 data-bs-parent="#faqAccordion">
+
+                <div class="accordion-body">
+
+                    TechPath AI is a technology career planning platform that generates personalized learning roadmaps for different technology fields such as Artificial Intelligence, Web Development, Data Science, Cybersecurity, Cloud Computing, UI/UX Design, Mobile App Development, and more.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="accordion-item rounded-4 mb-3 border-0 shadow-sm">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed rounded-4"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#faq2">
+
+                    Is TechPath AI free to use?
+
+                </button>
+
+            </h2>
+
+            <div id="faq2"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#faqAccordion">
+
+                <div class="accordion-body">
+
+                    Yes. TechPath AI is free for students who want to explore technology careers, create personalized roadmaps, and track their learning progress.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="accordion-item rounded-4 mb-3 border-0 shadow-sm">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed rounded-4"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#faq3">
+
+                    Do I need programming experience?
+
+                </button>
+
+            </h2>
+
+            <div id="faq3"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#faqAccordion">
+
+                <div class="accordion-body">
+
+                    Not at all. Whether you're a complete beginner or already have programming experience, TechPath AI recommends a roadmap that matches your current skill level.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="accordion-item rounded-4 mb-3 border-0 shadow-sm">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed rounded-4"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#faq4">
+
+                    Can I track my progress?
+
+                </button>
+
+            </h2>
+
+            <div id="faq4"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#faqAccordion">
+
+                <div class="accordion-body">
+
+                    Yes. You can mark completed skills, monitor your overall progress, earn achievement badges, and analyze your learning journey through interactive dashboards.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ==========================
+     FINAL CALL TO ACTION
+========================== -->
+
+<section class="py-5">
+
+    <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
+
+        <div class="card-body text-center py-5 px-4"
+             style="background:linear-gradient(135deg,#4F46E5,#7C3AED); color:white;">
+
+            <div class="display-3 mb-3">
+                🚀
+            </div>
+
+            <h2 class="display-5 fw-bold mb-3">
+                Ready to Start Your Tech Journey?
+            </h2>
+
+            <p class="lead mb-4 mx-auto"
+               style="max-width:700px;">
+
+                Join TechPath AI today and receive a personalized learning roadmap,
+                track your progress, unlock achievements, and build the skills
+                needed for your dream career in technology.
+
+            </p>
+
+            <a href="{{ url_for('create_profile') }}"
+               class="btn btn-light btn-lg px-5 me-3 mb-2">
+
+                <i class="bi bi-person-plus-fill me-2"></i>
+
+                Create Free Account
+
+            </a>
+
+            <a href="{{ url_for('login') }}"
+               class="btn btn-outline-light btn-lg px-5 mb-2">
+
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                Login
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
 
 {% endblock %}

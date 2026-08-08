@@ -1,228 +1,229 @@
 {% extends "base.html" %}
 
-
 {% block title %}
-Login
+Login | TechPath AI
 {% endblock %}
-
-
 
 {% block content %}
 
+<div class="col-lg-5 col-md-7">
 
-<div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0 rounded-4">
 
+        <!-- Header -->
+        <div class="card-header text-white text-center py-4"
+             style="background: linear-gradient(135deg, #4F46E5, #7C3AED);">
 
-<div class="row justify-content-center">
+            <h2 class="fw-bold mb-2">
+                🔐 Welcome Back
+            </h2>
 
+            <p class="mb-0">
+                Sign in to continue your AI Career Planner journey.
+            </p>
 
-<div class="col-lg-5">
-
-
-
-<div class="card shadow-lg border-0 rounded-4">
-
-
-
-<div class="card-header text-white text-center py-4"
-style="background:linear-gradient(135deg,#4F46E5,#7C3AED);">
-
-
-<h2>
-🔐 Welcome Back
-</h2>
+        </div>
 
 
-<p class="mb-0">
+        <!-- Body -->
+        <div class="card-body p-4">
 
-Continue your AI career journey
+            <!-- Error Message -->
+            {% if error %}
 
-</p>
+            <div class="alert alert-danger rounded-3">
 
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- Login Form -->
+            <form method="POST">
+
+
+                <!-- ================= EMAIL ================= -->
+
+                <div class="mb-3">
+
+                    <label for="email"
+                           class="form-label fw-semibold">
+
+                        Email Address
+
+                    </label>
+
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+
+                            <i class="bi bi-envelope-fill"></i>
+
+                        </span>
+
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email address"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= PASSWORD ================= -->
+
+                <div class="mb-3">
+
+                    <label for="password"
+                           class="form-label fw-semibold">
+
+                        Password
+
+                    </label>
+
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+
+                            <i class="bi bi-lock-fill"></i>
+
+                        </span>
+
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            required>
+
+
+                        <!-- Show / Hide Password -->
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            id="togglePassword">
+
+                            <i class="bi bi-eye-fill"
+                               id="toggleIcon"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= FORGOT PASSWORD ================= -->
+
+                <div class="text-end mb-4">
+
+                    <a href="{{ url_for('forgot_password') }}"
+                       class="text-decoration-none">
+
+                        Forgot Password?
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================= LOGIN BUTTON ================= -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100 py-3 fw-semibold">
+
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                    Login
+
+                </button>
+
+            </form>
+
+
+            <hr class="my-4">
+
+
+            <!-- ================= CREATE ACCOUNT ================= -->
+
+            <div class="text-center">
+
+                <p class="text-muted mb-3">
+
+                    Don't have an account yet?
+
+                </p>
+
+
+                <a href="{{ url_for('create_profile') }}"
+                   class="btn btn-outline-primary">
+
+                    <i class="bi bi-person-plus-fill me-2"></i>
+
+                    Create Profile
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 
+<!-- ================= PASSWORD TOGGLE ================= -->
 
+<script>
 
+    const togglePassword =
+        document.getElementById("togglePassword");
 
-<div class="card-body p-4">
+    const password =
+        document.getElementById("password");
 
+    const toggleIcon =
+        document.getElementById("toggleIcon");
 
 
-{% if error %}
+    togglePassword.addEventListener("click", function () {
 
-<div class="alert alert-danger rounded-4">
+        if (password.type === "password") {
 
-<i class="bi bi-exclamation-triangle-fill me-2"></i>
+            password.type = "text";
 
-{{ error }}
+            toggleIcon.classList.remove("bi-eye-fill");
 
-</div>
+            toggleIcon.classList.add("bi-eye-slash-fill");
 
-{% endif %}
+        } else {
 
+            password.type = "password";
 
+            toggleIcon.classList.remove("bi-eye-slash-fill");
 
+            toggleIcon.classList.add("bi-eye-fill");
 
+        }
 
-<form method="POST">
+    });
 
-
-
-<label class="fw-semibold">
-
-Name
-
-</label>
-
-
-<div class="input-group mb-3">
-
-
-<span class="input-group-text">
-
-<i class="bi bi-person-fill"></i>
-
-</span>
-
-
-<input
-
-type="text"
-
-name="name"
-
-class="form-control"
-
-placeholder="Enter your name"
-
-required>
-
-
-</div>
-
-
-
-
-
-
-<label class="fw-semibold">
-
-Password
-
-</label>
-
-
-
-<div class="input-group mb-4">
-
-
-<span class="input-group-text">
-
-<i class="bi bi-lock-fill"></i>
-
-</span>
-
-
-<input
-
-type="password"
-
-name="password"
-
-class="form-control"
-
-placeholder="Enter your password"
-
-required>
-
-
-</div>
-
-
-
-
-
-
-
-<button
-
-type="submit"
-
-class="btn btn-primary w-100 py-3"
-
-onclick="showSpinner(this)">
-
-
-<i class="bi bi-box-arrow-in-right me-2"></i>
-
-Login
-
-
-</button>
-
-
-
-</form>
-
-
-
-
-
-
-<hr class="my-4">
-
-
-
-
-
-<div class="text-center">
-
-
-<p class="text-muted mb-2">
-
-Don't have an account?
-
-</p>
-
-
-
-<a href="{{ url_for('create_profile') }}"
-
-class="btn btn-outline-primary">
-
-
-<i class="bi bi-person-plus-fill me-2"></i>
-
-Create Profile
-
-
-</a>
-
-
-
-</div>
-
-
-
-
-</div>
-
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
+</script>
 
 {% endblock %}
