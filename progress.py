@@ -1,31 +1,34 @@
-import csv
-import os
+from data_manager import DataManager
+
+
 class ProgressTracker:
 
-    def __init__(self, roadmap, file_name="data/progress.csv"):
+    def __init__(self, roadmap):
 
-     self.roadmap = roadmap
-     self.file_name = file_name
-     self.fields = ["user_id", "skill", "completed"]
-     self.create_file()
-    def create_file(self):
+        self.roadmap = roadmap
 
-      if not os.path.exists(self.file_name):
+        # Use the same SQLite database as the rest of TechPath AI
+        self.data_manager = DataManager("data/techpath.db")
 
-        with open(self.file_name, "w", newline="") as file:
+    # =========================================================
+    # COMPLETE SKILL
+    # =========================================================
 
-            writer = csv.writer(file)
-
-            writer.writerow(self.fields) 
     def complete_skill(self, skill_name):
 
         for skill in self.roadmap:
 
             if skill.name.lower() == skill_name.lower():
+
                 skill.set_completed(True)
+
                 return True
 
         return False
+
+    # =========================================================
+    # COMPLETED SKILLS
+    # =========================================================
 
     def completed_skills(self):
 
@@ -38,101 +41,106 @@ class ProgressTracker:
 
         return count
 
+    # =========================================================
+    # REMAINING SKILLS
+    # =========================================================
+
     def remaining_skills(self):
 
-        return len(self.roadmap) - self.completed_skills()
+        return (
+            len(self.roadmap)
+            - self.completed_skills()
+        )
+
+    # =========================================================
+    # PROGRESS PERCENTAGE
+    # =========================================================
 
     def progress_percentage(self):
 
-      total = len(self.roadmap)
+        total = len(self.roadmap)
 
-      if total == 0:
-              return 0
+        if total == 0:
+            return 0
 
-      completed = self.completed_skills()
+        completed = self.completed_skills()
 
-      percentage = (completed / total) * 100
+        percentage = (
+            completed / total
+        ) * 100
 
-      return round(percentage, 2)
+        return round(
+            percentage,
+            2
+        )
+
+    # =========================================================
+    # DISPLAY PROGRESS
+    # =========================================================
 
     def display_progress(self):
 
-        print("\n========== Progress ==========")
-        print(f"Completed : {self.completed_skills()}")
-        print(f"Remaining : {self.remaining_skills()}")
-        print(f"Progress  : {self.progress_percentage():.2f}%")
-    def search_skill(self, keyword):
-
-      results = []
-
-      keyword = keyword.lower()
-
-      for skill in self.roadmap:
-
-        if keyword in skill.name.lower():
-
-            results.append(skill)
-
-      return results    
-    def save_progress(self, user_id):
-
-      rows = []
-
-      if os.path.exists(self.file_name):
-
-        with open(self.file_name, "r", newline="") as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if row["user_id"] != str(user_id):
-
-                    rows.append(row)
-
-      for skill in self.roadmap:
-
-        rows.append({
-
-            "user_id": user_id,
-
-            "skill": skill.name,
-
-            "completed": skill.completed
-
-        })
-
-      with open(self.file_name, "w", newline="") as file:
-
-        writer = csv.DictWriter(
-
-            file,
-
-            fieldnames=self.fields
-
+        print(
+            "\n========== Progress =========="
         )
 
-        writer.writeheader()
+        print(
+            f"Completed : {self.completed_skills()}"
+        )
 
-        writer.writerows(rows)
+        print(
+            f"Remaining : {self.remaining_skills()}"
+        )
+
+        print(
+            f"Progress  : {self.progress_percentage():.2f}%"
+        )
+
+    # =========================================================
+    # SEARCH SKILL
+    # =========================================================
+
+    def search_skill(self, keyword):
+
+        results = []
+
+        keyword = keyword.lower()
+
+        for skill in self.roadmap:
+
+            if keyword in skill.name.lower():
+
+                results.append(skill)
+
+        return results
+
+    # =========================================================
+    # SAVE PROGRESS
+    # =========================================================
+
+    def save_progress(self, user_id):
+
+        self.data_manager.save_progress(
+            user_id,
+            self.roadmap
+        )
+
+    # =========================================================
+    # LOAD PROGRESS
+    # =========================================================
+
     def load_progress(self, user_id):
 
-     if not os.path.exists(self.file_name):
+        saved_progress = (
+            self.data_manager.load_progress(
+                user_id
+            )
+        )
 
-        return
+        for skill in self.roadmap:
 
-     with open(self.file_name, "r", newline="") as file:
+            if skill.name in saved_progress:
 
-        reader = csv.DictReader(file)
-
-        for row in reader:
-
-            if row["user_id"] == str(user_id):
-
-                for skill in self.roadmap:
-
-                    if skill.name == row["skill"]:
-
-                        skill.completed = (
-                            row["completed"] == "True"
-                        )    
+                skill.completed = (
+                    saved_progress[skill.name]
+                )

@@ -89,9 +89,9 @@ mail = Mail(app)
 # DATA MANAGERS
 # =========================================================
 
-users_file = os.path.join(
+database_file = os.path.join(
     DATA_DIR,
-    "users.csv"
+    "techpath.db"
 )
 
 careers_file = os.path.join(
@@ -99,14 +99,13 @@ careers_file = os.path.join(
     "careers.csv"
 )
 
+data_manager = DataManager(
+    database_file
+)
 
-data_manager = DataManager(users_file)
-
-career_manager = CareerPath(careers_file)
-
-
-# Make sure users.csv exists when application starts
-data_manager.create_file_if_not_exists()
+career_manager = CareerPath(
+    careers_file
+)
 
 
 # =========================================================
@@ -560,13 +559,15 @@ def dashboard():
 
         session.clear()
 
+
         return redirect(
             url_for("login")
         )
 
 
     roadmap = career_manager.generate_roadmap(
-        user.career_goal
+        user.career_goal,
+        user
     )
 
 
@@ -1225,7 +1226,8 @@ def roadmap():
 
 
     roadmap = career_manager.generate_roadmap(
-        user.career_goal
+        user.career_goal,
+        user
     )
 
 
@@ -1358,7 +1360,8 @@ def complete_skill(skill_name):
 
 
     roadmap = career_manager.generate_roadmap(
-        user.career_goal
+        user.career_goal,
+        user
     )
 
 
@@ -1423,7 +1426,8 @@ def analytics():
 
 
     roadmap = career_manager.generate_roadmap(
-        user.career_goal
+        user.career_goal,
+        user
     )
 
 
@@ -1499,7 +1503,8 @@ def career_preview(career_name):
 
 
     roadmap = career_manager.generate_roadmap(
-        career_name
+        career_name,
+        user
     )
 
 

@@ -1,199 +1,266 @@
-import csv
+import sqlite3
 import os
 from user import User
 
 
-# --------------------------------------------------
-# BASE DIRECTORIES
-# --------------------------------------------------
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-
-
 class DataManager:
 
-    def __init__(self, file_name):
+    def __init__(self, db_file="data/techpath.db"):
 
-        # Convert relative paths such as
-        # "data/users.csv" into an absolute path.
-        if os.path.isabs(file_name):
-            self.file_name = file_name
-        else:
-            self.file_name = os.path.join(BASE_DIR, file_name)
+        self.db_file = db_file
 
-        # Make sure data directory exists
-        os.makedirs(
-            os.path.dirname(self.file_name),
-            exist_ok=True
-        )
-
-        self.fields = [
-            "user_id",
-            "name",
-            "age",
-            "education",
-            "career_goal",
-            "study_hours",
-            "password",
-            "current_level",
-            "programming_experience",
-            "interests",
-            "learning_style",
-            "email",
-            "verified",
-            "verification_code"
-        ]
-
-    # --------------------------------------------------
-    # CREATE USERS FILE
-    # --------------------------------------------------
-
-    def create_file_if_not_exists(self):
-
-        directory = os.path.dirname(self.file_name)
+        # Make sure the directory exists
+        directory = os.path.dirname(self.db_file)
 
         if directory:
-            os.makedirs(
-                directory,
-                exist_ok=True
+            os.makedirs(directory, exist_ok=True)
+
+        self.create_database()
+
+    # =====================================================
+    # DATABASE CONNECTION
+    # =====================================================
+
+    def get_connection(self):
+
+        connection = sqlite3.connect(
+            self.db_file
+        )
+
+        connection.row_factory = sqlite3.Row
+
+        return connection
+
+    # =====================================================
+    # CREATE DATABASE
+    # =====================================================
+
+    def create_database(self):
+
+        connection = self.get_connection()
+
+        cursor = connection.cursor()
+
+        # -------------------------------------------------
+        # USERS TABLE
+        # -------------------------------------------------
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+
+                user_id TEXT PRIMARY KEY,
+
+                name TEXT NOT NULL,
+
+                age INTEGER NOT NULL,
+
+                education TEXT NOT NULL,
+
+                career_goal TEXT NOT NULL,
+
+                study_hours REAL NOT NULL,
+
+                password TEXT NOT NULL,
+
+                current_level TEXT,
+
+                programming_experience TEXT,
+
+                interests TEXT,
+
+                learning_style TEXT,
+
+                email TEXT UNIQUE NOT NULL,
+
+                verified INTEGER DEFAULT 0,
+
+                verification_code INTEGER
+
             )
+        """)
 
-        if not os.path.exists(self.file_name):
+        # -------------------------------------------------
+        # PROGRESS TABLE
+        # -------------------------------------------------
 
-            print("📁 Creating data file:", self.file_name)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS progress (
 
-            with open(
-                self.file_name,
-                "w",
-                newline="",
-                encoding="utf-8"
-            ) as file:
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-                writer = csv.DictWriter(
-                    file,
-                    fieldnames=self.fields
-                )
+                user_id TEXT NOT NULL,
 
-                writer.writeheader()
+                skill_name TEXT NOT NULL,
 
-    # --------------------------------------------------
+                completed INTEGER DEFAULT 0,
+
+                UNIQUE(user_id, skill_name),
+
+                FOREIGN KEY(user_id)
+                REFERENCES users(user_id)
+                ON DELETE CASCADE
+
+            )
+        """)
+
+        connection.commit()
+
+        connection.close()
+
+    # =====================================================
+    # USER HELPER
+    # =====================================================
+
+    def _row_to_user(self, row):
+
+        if row is None:
+            return None
+
+        return User(
+            row["user_id"],
+            row["name"],
+            int(row["age"]),
+            row["education"],
+            row["career_goal"],
+            float(row["study_hours"]),
+            row["password"],
+            row["current_level"],
+            row["programming_experience"],
+            row["interests"],
+            row["learning_style"],
+            row["email"],
+            bool(row["verified"]),
+            (
+                int(row["verification_code"])
+                if row["verification_code"] is not None
+                else None
+            )
+        )
+
+    # =====================================================
     # SAVE USER
-    # --------------------------------------------------
+    # =====================================================
 
     def save_user(self, user):
 
-        self.create_file_if_not_exists()
+        connection = self.get_connection()
 
-        with open(
-            self.file_name,
-            "a",
-            newline="",
-            encoding="utf-8"
-        ) as file:
+        cursor = connection.cursor()
 
-            writer = csv.DictWriter(
-                file,
-                fieldnames=self.fields
+        cursor.execute("""
+            INSERT INTO users (
+
+                user_id,
+                name,
+                age,
+                education,
+                career_goal,
+                study_hours,
+                password,
+                current_level,
+                programming_experience,
+                interests,
+                learning_style,
+                email,
+                verified,
+                verification_code
+
             )
 
-            writer.writerow(
-                user.to_dict()
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?
             )
+        """, (
 
-        print("✅ USER SAVED:", user.user_id)
+            user.user_id,
+            user.name,
+            user.age,
+            user.education,
+            user.career_goal,
+            user.study_hours,
+            user.password,
+            user.current_level,
+            user.programming_experience,
+            user.interests,
+            user.learning_style,
+            user.email,
+            int(user.verified),
+            user.verification_code
 
-    # --------------------------------------------------
+        ))
+
+        connection.commit()
+
+        connection.close()
+
+    # =====================================================
     # LOAD ALL USERS
-    # --------------------------------------------------
+    # =====================================================
 
     def load_users(self):
 
-        self.create_file_if_not_exists()
+        connection = self.get_connection()
 
-        users = []
+        cursor = connection.cursor()
 
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
+        cursor.execute("""
+            SELECT *
+            FROM users
+        """)
 
-            reader = csv.DictReader(file)
+        rows = cursor.fetchall()
 
-            for row in reader:
+        connection.close()
 
-                user = User(
-                    row["user_id"],
-                    row["name"],
-                    int(row["age"]),
-                    row["education"],
-                    row["career_goal"],
-                    float(row["study_hours"]),
-                    row["password"],
-                    row["current_level"],
-                    row["programming_experience"],
-                    row["interests"],
-                    row["learning_style"],
-                    row["email"],
-                    row["verified"] == "True",
-                    int(row["verification_code"])
-                    if row["verification_code"]
-                    else None
-                )
+        return [
+            self._row_to_user(row)
+            for row in rows
+        ]
 
-                users.append(user)
-
-        return users
-
-    # --------------------------------------------------
-    # GENERATE NEXT USER ID
-    # --------------------------------------------------
+    # =====================================================
+    # GENERATE USER ID
+    # =====================================================
 
     def get_next_id(self):
 
-        self.create_file_if_not_exists()
+        connection = self.get_connection()
 
-        ids = []
+        cursor = connection.cursor()
 
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
+        cursor.execute("""
+            SELECT user_id
+            FROM users
+            WHERE user_id LIKE 'AI%'
+        """)
 
-            reader = csv.DictReader(file)
+        rows = cursor.fetchall()
 
-            for row in reader:
+        connection.close()
 
-                user_id = row.get(
-                    "user_id",
-                    ""
-                ).strip()
+        numbers = []
 
-                if user_id.startswith("AI"):
+        for row in rows:
 
-                    try:
+            user_id = row["user_id"]
 
-                        number = int(
-                            user_id[2:]
-                        )
+            try:
 
-                        ids.append(number)
+                numbers.append(
+                    int(user_id[2:])
+                )
 
-                    except ValueError:
+            except (ValueError, TypeError):
 
-                        pass
+                pass
 
-        next_id = (
-            max(ids) + 1
-            if ids
+        next_number = (
+            max(numbers) + 1
+            if numbers
             else 1
         )
 
-        new_id = f"AI{next_id:03d}"
+        new_id = f"AI{next_number:03d}"
 
         print(
             "🆕 GENERATED USER ID:",
@@ -202,509 +269,258 @@ class DataManager:
 
         return new_id
 
-    # --------------------------------------------------
+    # =====================================================
+    # LOAD USER BY ID
+    # =====================================================
+
+    def load_user_by_id(self, user_id):
+
+        connection = self.get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM users
+            WHERE user_id = ?
+        """, (
+            str(user_id).strip(),
+        ))
+
+        row = cursor.fetchone()
+
+        connection.close()
+
+        return self._row_to_user(row)
+
+    # =====================================================
+    # LOAD USER BY EMAIL
+    # =====================================================
+
+    def load_user_by_email(self, email):
+
+        connection = self.get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM users
+            WHERE LOWER(email) = LOWER(?)
+        """, (
+            email.strip(),
+        ))
+
+        row = cursor.fetchone()
+
+        connection.close()
+
+        return self._row_to_user(row)
+
+    # =====================================================
+    # LOAD USER BY NAME
+    # =====================================================
+
+    def load_user_by_name(self, name):
+
+        connection = self.get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM users
+            WHERE name = ?
+        """, (
+            name,
+        ))
+
+        row = cursor.fetchone()
+
+        connection.close()
+
+        return self._row_to_user(row)
+
+    # =====================================================
+    # UPDATE USER
+    # =====================================================
+
+    def update_user(self, user):
+
+        connection = self.get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            UPDATE users
+
+            SET
+
+                name = ?,
+                age = ?,
+                education = ?,
+                career_goal = ?,
+                study_hours = ?,
+                password = ?,
+                current_level = ?,
+                programming_experience = ?,
+                interests = ?,
+                learning_style = ?,
+                email = ?,
+                verified = ?,
+                verification_code = ?
+
+            WHERE user_id = ?
+
+        """, (
+
+            user.name,
+            user.age,
+            user.education,
+            user.career_goal,
+            user.study_hours,
+            user.password,
+            user.current_level,
+            user.programming_experience,
+            user.interests,
+            user.learning_style,
+            user.email,
+            int(user.verified),
+            user.verification_code,
+            user.user_id
+
+        ))
+
+        connection.commit()
+
+        connection.close()
+
+    # =====================================================
+    # DELETE USER
+    # =====================================================
+
+    def delete_user(self, user_id):
+
+        connection = self.get_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            DELETE FROM progress
+            WHERE user_id = ?
+        """, (
+            str(user_id),
+        ))
+
+        cursor.execute("""
+            DELETE FROM users
+            WHERE user_id = ?
+        """, (
+            str(user_id),
+        ))
+
+        connection.commit()
+
+        connection.close()
+
+    # =====================================================
     # SAVE PROGRESS
-    # --------------------------------------------------
+    # =====================================================
 
-    def save_progress(
-        self,
-        user_id,
-        roadmap
-    ):
+    def save_progress(self, user_id, roadmap):
 
-        os.makedirs(
-            DATA_DIR,
-            exist_ok=True
-        )
+        connection = self.get_connection()
 
-        progress_file = os.path.join(
-            DATA_DIR,
-            "progress.csv"
-        )
+        cursor = connection.cursor()
 
-        with open(
-            progress_file,
-            "w",
-            newline="",
-            encoding="utf-8"
-        ) as file:
+        for skill in roadmap:
 
-            writer = csv.writer(file)
+            cursor.execute("""
+                INSERT INTO progress (
 
-            writer.writerow([
-                "user_id",
-                "skill_name",
-                "completed"
-            ])
-
-            for skill in roadmap:
-
-                writer.writerow([
                     user_id,
-                    skill.name,
-                    skill.completed
-                ])
+                    skill_name,
+                    completed
 
-    # --------------------------------------------------
+                )
+
+                VALUES (?, ?, ?)
+
+                ON CONFLICT(user_id, skill_name)
+
+                DO UPDATE SET
+
+                    completed =
+                    excluded.completed
+
+            """, (
+
+                str(user_id),
+                skill.name,
+                int(skill.completed)
+
+            ))
+
+        connection.commit()
+
+        connection.close()
+
+    # =====================================================
     # LOAD PROGRESS
-    # --------------------------------------------------
+    # =====================================================
 
     def load_progress(self, user_id):
 
         progress = {}
 
-        progress_file = os.path.join(
-            DATA_DIR,
-            "progress.csv"
-        )
+        connection = self.get_connection()
 
-        try:
+        cursor = connection.cursor()
 
-            with open(
-                progress_file,
-                "r",
-                encoding="utf-8"
-            ) as file:
+        cursor.execute("""
+            SELECT
+                skill_name,
+                completed
 
-                reader = csv.DictReader(file)
+            FROM progress
 
-                for row in reader:
+            WHERE user_id = ?
 
-                    if row["user_id"] == user_id:
+        """, (
+            str(user_id),
+        ))
 
-                        progress[
-                            row["skill_name"]
-                        ] = (
-                            row["completed"]
-                            == "True"
-                        )
+        rows = cursor.fetchall()
 
-        except FileNotFoundError:
+        connection.close()
 
-            pass
+        for row in rows:
+
+            progress[
+                row["skill_name"]
+            ] = bool(
+                row["completed"]
+            )
 
         return progress
 
-    # --------------------------------------------------
-    # LOAD USER BY ID
-    # --------------------------------------------------
-
-    def load_user_by_id(self, user_id):
-
-        self.create_file_if_not_exists()
-
-        print(
-            "🔎 Looking for USER ID:",
-            repr(user_id)
-        )
-
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                stored_id = row[
-                    "user_id"
-                ].strip()
-
-                print(
-                    "📁 Stored USER ID:",
-                    repr(stored_id)
-                )
-
-                if stored_id == str(
-                    user_id
-                ).strip():
-
-                    print(
-                        "✅ USER FOUND:",
-                        stored_id
-                    )
-
-                    return User(
-                        row["user_id"].strip(),
-                        row["name"],
-                        int(row["age"]),
-                        row["education"],
-                        row["career_goal"],
-                        float(row["study_hours"]),
-                        row["password"],
-                        row["current_level"],
-                        row["programming_experience"],
-                        row["interests"],
-                        row["learning_style"],
-                        row["email"],
-                        row["verified"] == "True",
-                        int(row["verification_code"])
-                        if row["verification_code"]
-                        else None
-                    )
-
-        print(
-            "❌ USER NOT FOUND:",
-            repr(user_id)
-        )
-
-        return None
-
-    # --------------------------------------------------
-    # LOAD USER BY CREDENTIALS
-    # --------------------------------------------------
-
-    def load_user_by_credentials(
-        self,
-        name,
-        password
-    ):
-
-        self.create_file_if_not_exists()
-
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if (
-                    row["name"] == name
-                    and
-                    row["password"] == password
-                ):
-
-                    return User(
-                        row["user_id"],
-                        row["name"],
-                        int(row["age"]),
-                        row["education"],
-                        row["career_goal"],
-                        float(row["study_hours"]),
-                        row["password"],
-                        row["current_level"],
-                        row["programming_experience"],
-                        row["interests"],
-                        row["learning_style"],
-                        row["email"],
-                        row["verified"] == "True",
-                        int(row["verification_code"])
-                        if row["verification_code"]
-                        else None
-                    )
-
-        return None
-
-    # --------------------------------------------------
-    # UPDATE USER
-    # --------------------------------------------------
-
-    def update_user(self, updated_user):
-
-        self.create_file_if_not_exists()
-
-        users = []
-
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if (
-                    row["user_id"]
-                    ==
-                    updated_user.user_id
-                ):
-
-                    row["name"] = (
-                        updated_user.name
-                    )
-
-                    row["age"] = (
-                        updated_user.age
-                    )
-
-                    row["education"] = (
-                        updated_user.education
-                    )
-
-                    row["career_goal"] = (
-                        updated_user.career_goal
-                    )
-
-                    row["study_hours"] = (
-                        updated_user.study_hours
-                    )
-
-                    row["password"] = (
-                        updated_user.password
-                    )
-
-                    row["email"] = (
-                        updated_user.email
-                    )
-
-                    row["verified"] = (
-                        updated_user.verified
-                    )
-
-                    row["verification_code"] = (
-                        updated_user.verification_code
-                    )
-
-                    row["current_level"] = (
-                        updated_user.current_level
-                    )
-
-                    row[
-                        "programming_experience"
-                    ] = (
-                        updated_user.programming_experience
-                    )
-
-                    row["interests"] = (
-                        updated_user.interests
-                    )
-
-                    row["learning_style"] = (
-                        updated_user.learning_style
-                    )
-
-                users.append(row)
-
-        with open(
-            self.file_name,
-            "w",
-            newline="",
-            encoding="utf-8"
-        ) as file:
-
-            writer = csv.DictWriter(
-                file,
-                fieldnames=self.fields
-            )
-
-            writer.writeheader()
-
-            writer.writerows(users)
-
-    # --------------------------------------------------
-    # LOAD USER BY NAME
-    # --------------------------------------------------
-
-    def load_user_by_name(self, name):
-
-        self.create_file_if_not_exists()
-
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if row["name"] == name:
-
-                    return User(
-                        row["user_id"],
-                        row["name"],
-                        int(row["age"]),
-                        row["education"],
-                        row["career_goal"],
-                        float(row["study_hours"]),
-                        row["password"],
-                        row["current_level"],
-                        row["programming_experience"],
-                        row["interests"],
-                        row["learning_style"],
-                        row["email"],
-                        row["verified"] == "True",
-                        int(row["verification_code"])
-                        if row["verification_code"]
-                        else None
-                    )
-
-        return None
-
-    # --------------------------------------------------
-    # LOAD USER BY EMAIL
-    # --------------------------------------------------
-
-    def load_user_by_email(self, email):
-
-        self.create_file_if_not_exists()
-
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if row["email"] == email:
-
-                    return User(
-                        row["user_id"],
-                        row["name"],
-                        int(row["age"]),
-                        row["education"],
-                        row["career_goal"],
-                        float(row["study_hours"]),
-                        row["password"],
-                        row["current_level"],
-                        row["programming_experience"],
-                        row["interests"],
-                        row["learning_style"],
-                        row["email"],
-                        row["verified"] == "True",
-                        int(row["verification_code"])
-                        if row["verification_code"]
-                        else None
-                    )
-
-        return None
-
-    # --------------------------------------------------
-    # DELETE USER
-    # --------------------------------------------------
-
-    def delete_user(self, user_id):
-
-        self.create_file_if_not_exists()
-
-        users = []
-
-        with open(
-            self.file_name,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
-
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if row["user_id"] != str(
-                    user_id
-                ):
-
-                    users.append(row)
-
-        with open(
-            self.file_name,
-            "w",
-            newline="",
-            encoding="utf-8"
-        ) as file:
-
-            writer = csv.DictWriter(
-                file,
-                fieldnames=self.fields
-            )
-
-            writer.writeheader()
-
-            writer.writerows(users)
-
-    # --------------------------------------------------
+    # =====================================================
     # DELETE PROGRESS
-    # --------------------------------------------------
+    # =====================================================
 
     def delete_progress(self, user_id):
 
-        progress_file = os.path.join(
-            DATA_DIR,
-            "progress.csv"
-        )
+        connection = self.get_connection()
 
-        if not os.path.exists(
-            progress_file
-        ):
-            return
+        cursor = connection.cursor()
 
-        rows = []
+        cursor.execute("""
+            DELETE FROM progress
+            WHERE user_id = ?
+        """, (
+            str(user_id),
+        ))
 
-        with open(
-            progress_file,
-            "r",
-            newline="",
-            encoding="utf-8-sig"
-        ) as file:
+        connection.commit()
 
-            reader = csv.DictReader(file)
-
-            for row in reader:
-
-                if (
-                    row.get(
-                        "user_id",
-                        ""
-                    ).strip()
-                    !=
-                    str(user_id).strip()
-                ):
-
-                    rows.append(row)
-
-        with open(
-            progress_file,
-            "w",
-            newline="",
-            encoding="utf-8"
-        ) as file:
-
-            fieldnames = [
-                "user_id",
-                "skill_name",
-                "completed"
-            ]
-
-            writer = csv.DictWriter(
-                file,
-                fieldnames=fieldnames
-            )
-
-            writer.writeheader()
-
-            for row in rows:
-
-                writer.writerow({
-                    "user_id": row.get(
-                        "user_id",
-                        ""
-                    ),
-                    "skill_name": row.get(
-                        "skill_name",
-                        row.get(
-                            "skill",
-                            ""
-                        )
-                    ),
-                    "completed": row.get(
-                        "completed",
-                        ""
-                    )
-                })
+        connection.close()
