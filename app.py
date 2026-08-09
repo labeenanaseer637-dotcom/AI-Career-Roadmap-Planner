@@ -66,56 +66,66 @@ app.secret_key = os.environ.get(
 
 
 # =========================================================
-# MAIL CONFIGURATION (Resend HTTPS API)
+# MAIL CONFIGURATION (Brevo HTTPS API)
 # =========================================================
 # NOTE: Render's free tier blocks outbound SMTP ports
 # (25, 465, 587), which is why Flask-Mail/SMTP hung and
-# crashed the worker. Resend sends over HTTPS (port 443),
-# which is never blocked.
+# crashed the worker. Brevo's API sends over HTTPS (port
+# 443), which is never blocked.
 
-RESEND_API_KEY = os.environ.get(
-    "RESEND_API_KEY"
+BREVO_API_KEY = os.environ.get(
+    "BREVO_API_KEY"
 )
 
-# Until you verify your own domain on Resend, this is the
-# only "from" address that works, and it can only deliver
-# to the email address you signed up to Resend with.
-RESEND_FROM_ADDRESS = os.environ.get(
-    "RESEND_FROM_ADDRESS",
-    "onboarding@resend.dev"
+# This must be a sender you've verified in Brevo
+# (Settings -> Senders, Domains, IPs -> Senders).
+BREVO_FROM_ADDRESS = os.environ.get(
+    "BREVO_FROM_ADDRESS",
+    "labeenanaseer637@gmail.com"
+)
+
+BREVO_FROM_NAME = os.environ.get(
+    "BREVO_FROM_NAME",
+    "TechPath AI"
 )
 
 
 def send_email(to_email, subject, html):
     """
-    Sends an email via the Resend HTTPS API.
+    Sends an email via the Brevo HTTPS API.
     Raises an exception on failure so callers can decide
     how to handle it (same contract as the old mail.send()).
     """
 
-    if not RESEND_API_KEY:
+    if not BREVO_API_KEY:
         raise RuntimeError(
-            "RESEND_API_KEY is not set in the environment."
+            "BREVO_API_KEY is not set in the environment."
         )
 
     response = requests.post(
-        "https://api.resend.com/emails",
+        "https://api.brevo.com/v3/smtp/email",
         headers={
-            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "api-key": BREVO_API_KEY,
             "Content-Type": "application/json",
+            "Accept": "application/json",
         },
         json={
-            "from": RESEND_FROM_ADDRESS,
-            "to": [to_email],
+            "sender": {
+                "name": BREVO_FROM_NAME,
+                "email": BREVO_FROM_ADDRESS,
+            },
+            "to": [
+                {"email": to_email}
+            ],
             "subject": subject,
-            "html": html,
+            "htmlContent": html,
         },
         timeout=10,
     )
 
     if response.status_code >= 400:
         raise RuntimeError(
-            f"Resend API error {response.status_code}: "
+            f"Brevo API error {response.status_code}: "
             f"{response.text}"
         )
 
