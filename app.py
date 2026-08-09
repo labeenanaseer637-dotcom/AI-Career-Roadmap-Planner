@@ -81,7 +81,7 @@ BREVO_API_KEY = os.environ.get(
 # (Settings -> Senders, Domains, IPs -> Senders).
 BREVO_FROM_ADDRESS = os.environ.get(
     "BREVO_FROM_ADDRESS",
-    "labeenanaseer637@gmail.com"
+    "aicareerplanner@gmail.com"
 )
 
 BREVO_FROM_NAME = os.environ.get(
