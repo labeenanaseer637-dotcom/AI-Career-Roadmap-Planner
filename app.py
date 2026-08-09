@@ -93,15 +93,24 @@ database_file = os.path.join(
     DATA_DIR,
     "techpath.db"
 )
-
+print("🔥 DATABASE PATH:", database_file)
 careers_file = os.path.join(
     DATA_DIR,
     "careers.csv"
 )
+print("🔥 CAREERS FILE PATH:", careers_file)
 
 data_manager = DataManager(
     database_file
 )
+print("🔥 USERS IN DATABASE:", [
+    {
+        "id": u.user_id,
+        "email": u.email,
+        "verified": u.verified
+    }
+    for u in data_manager.load_users()
+])
 
 career_manager = CareerPath(
     careers_file
@@ -281,6 +290,8 @@ def create_profile():
                     email
                 )
             )
+            print("📧 EMAIL BEING CHECKED:", repr(email))
+            print("👤 EXISTING USER:", existing_user)
 
             if existing_user:
 
