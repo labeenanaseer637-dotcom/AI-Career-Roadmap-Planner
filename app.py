@@ -1,6 +1,7 @@
 import re
 import os
 import random
+import requests
 
 from datetime import datetime
 
@@ -14,8 +15,6 @@ from flask import (
 )
 
 from dotenv import load_dotenv
-
-from flask_mail import Mail, Message
 
 from werkzeug.security import (
     check_password_hash,
@@ -67,22 +66,60 @@ app.secret_key = os.environ.get(
 
 
 # =========================================================
-# MAIL CONFIGURATION
+# MAIL CONFIGURATION (Resend HTTPS API)
 # =========================================================
+# NOTE: Render's free tier blocks outbound SMTP ports
+# (25, 465, 587), which is why Flask-Mail/SMTP hung and
+# crashed the worker. Resend sends over HTTPS (port 443),
+# which is never blocked.
 
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 587
-app.config["MAIL_USE_TLS"] = True
-
-app.config["MAIL_USERNAME"] = os.environ.get(
-    "MAIL_USERNAME"
+RESEND_API_KEY = os.environ.get(
+    "RESEND_API_KEY"
 )
 
-app.config["MAIL_PASSWORD"] = os.environ.get(
-    "MAIL_PASSWORD"
+# Until you verify your own domain on Resend, this is the
+# only "from" address that works, and it can only deliver
+# to the email address you signed up to Resend with.
+RESEND_FROM_ADDRESS = os.environ.get(
+    "RESEND_FROM_ADDRESS",
+    "onboarding@resend.dev"
 )
 
-mail = Mail(app)
+
+def send_email(to_email, subject, html):
+    """
+    Sends an email via the Resend HTTPS API.
+    Raises an exception on failure so callers can decide
+    how to handle it (same contract as the old mail.send()).
+    """
+
+    if not RESEND_API_KEY:
+        raise RuntimeError(
+            "RESEND_API_KEY is not set in the environment."
+        )
+
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": RESEND_FROM_ADDRESS,
+            "to": [to_email],
+            "subject": subject,
+            "html": html,
+        },
+        timeout=10,
+    )
+
+    if response.status_code >= 400:
+        raise RuntimeError(
+            f"Resend API error {response.status_code}: "
+            f"{response.text}"
+        )
+
+    return response.json()
 
 
 # =========================================================
@@ -363,13 +400,7 @@ def create_profile():
             # VERIFICATION EMAIL
             # -------------------------------------------------
 
-            msg = Message(
-                subject="TechPath AI - Email Verification",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
-
-            msg.html = render_template(
+            verification_html = render_template(
                 "emails/verification_email.html",
                 name=name,
                 code=verification_code,
@@ -379,7 +410,11 @@ def create_profile():
 
             try:
 
-                mail.send(msg)
+                send_email(
+                    to_email=email,
+                    subject="TechPath AI - Email Verification",
+                    html=verification_html
+                )
 
             except Exception as e:
 
@@ -942,30 +977,30 @@ def forgot_password():
         )
 
 
-        msg = Message(
-            subject="Reset Your TechPath AI Password",
-            sender=app.config["MAIL_USERNAME"],
-            recipients=[email]
-        )
+        reset_html = f"""
+        <p>Hello {user.name},</p>
+        <p>We received a request to reset your password.</p>
+        <p>Your verification code is:</p>
+        <h2>{reset_code}</h2>
+        <p>If you did not request a password reset,
+        you can safely ignore this email.</p>
+        <p>Regards,<br>TechPath AI Team</p>
+        """
 
+        try:
 
-        msg.body = f"""
-Hello {user.name},
+            send_email(
+                to_email=email,
+                subject="Reset Your TechPath AI Password",
+                html=reset_html
+            )
 
-We received a request to reset your password.
+        except Exception as e:
 
-Your verification code is:
-
-{reset_code}
-
-If you did not request a password reset, you can safely ignore this email.
-
-Regards,
-TechPath AI Team
-"""
-
-
-        mail.send(msg)
+            return render_template(
+                "forgot_password.html",
+                error=f"Email could not be sent: {e}"
+            )
 
 
         session["reset_email"] = email
