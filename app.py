@@ -1,7 +1,6 @@
 import re
 import os
 import random
-import requests
 
 from datetime import datetime
 
@@ -11,10 +10,13 @@ from flask import (
     request,
     session,
     url_for,
-    redirect
+    redirect,
+    Response
 )
 
 from dotenv import load_dotenv
+
+from flask_mail import Mail, Message
 
 from werkzeug.security import (
     check_password_hash,
@@ -66,70 +68,22 @@ app.secret_key = os.environ.get(
 
 
 # =========================================================
-# MAIL CONFIGURATION (Brevo HTTPS API)
+# MAIL CONFIGURATION
 # =========================================================
-# NOTE: Render's free tier blocks outbound SMTP ports
-# (25, 465, 587), which is why Flask-Mail/SMTP hung and
-# crashed the worker. Brevo's API sends over HTTPS (port
-# 443), which is never blocked.
 
-BREVO_API_KEY = os.environ.get(
-    "BREVO_API_KEY"
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+
+app.config["MAIL_USERNAME"] = os.environ.get(
+    "MAIL_USERNAME"
 )
 
-# This must be a sender you've verified in Brevo
-# (Settings -> Senders, Domains, IPs -> Senders).
-BREVO_FROM_ADDRESS = os.environ.get(
-    "BREVO_FROM_ADDRESS",
-    "aicareerplanner@gmail.com"
+app.config["MAIL_PASSWORD"] = os.environ.get(
+    "MAIL_PASSWORD"
 )
 
-BREVO_FROM_NAME = os.environ.get(
-    "BREVO_FROM_NAME",
-    "TechPath AI"
-)
-
-
-def send_email(to_email, subject, html):
-    """
-    Sends an email via the Brevo HTTPS API.
-    Raises an exception on failure so callers can decide
-    how to handle it (same contract as the old mail.send()).
-    """
-
-    if not BREVO_API_KEY:
-        raise RuntimeError(
-            "BREVO_API_KEY is not set in the environment."
-        )
-
-    response = requests.post(
-        "https://api.brevo.com/v3/smtp/email",
-        headers={
-            "api-key": BREVO_API_KEY,
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        },
-        json={
-            "sender": {
-                "name": BREVO_FROM_NAME,
-                "email": BREVO_FROM_ADDRESS,
-            },
-            "to": [
-                {"email": to_email}
-            ],
-            "subject": subject,
-            "htmlContent": html,
-        },
-        timeout=10,
-    )
-
-    if response.status_code >= 400:
-        raise RuntimeError(
-            f"Brevo API error {response.status_code}: "
-            f"{response.text}"
-        )
-
-    return response.json()
+mail = Mail(app)
 
 
 # =========================================================
@@ -226,6 +180,44 @@ def home():
 
     return render_template(
         "index.html"
+    )
+
+
+# =========================================================
+# SITEMAP
+# =========================================================
+
+@app.route("/sitemap.xml")
+def sitemap():
+
+    base_url = request.url_root.rstrip("/")
+
+    # Only public, indexable pages go here.
+    # Account-only / action pages (dashboard, profile,
+    # logout, delete-account, etc.) are deliberately left out.
+    pages = [
+        {"loc": f"{base_url}/", "changefreq": "weekly", "priority": "1.0"},
+        {"loc": f"{base_url}/login", "changefreq": "monthly", "priority": "0.6"},
+        {"loc": f"{base_url}/create-profile", "changefreq": "monthly", "priority": "0.8"},
+    ]
+
+    xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml_parts.append(
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    )
+
+    for page in pages:
+        xml_parts.append("  <url>")
+        xml_parts.append(f"    <loc>{page['loc']}</loc>")
+        xml_parts.append(f"    <changefreq>{page['changefreq']}</changefreq>")
+        xml_parts.append(f"    <priority>{page['priority']}</priority>")
+        xml_parts.append("  </url>")
+
+    xml_parts.append("</urlset>")
+
+    return Response(
+        "\n".join(xml_parts),
+        mimetype="application/xml"
     )
 
 
@@ -410,7 +402,13 @@ def create_profile():
             # VERIFICATION EMAIL
             # -------------------------------------------------
 
-            verification_html = render_template(
+            msg = Message(
+                subject="TechPath AI - Email Verification",
+                sender=app.config["MAIL_USERNAME"],
+                recipients=[email]
+            )
+
+            msg.html = render_template(
                 "emails/verification_email.html",
                 name=name,
                 code=verification_code,
@@ -420,11 +418,7 @@ def create_profile():
 
             try:
 
-                send_email(
-                    to_email=email,
-                    subject="TechPath AI - Email Verification",
-                    html=verification_html
-                )
+                mail.send(msg)
 
             except Exception as e:
 
@@ -987,30 +981,30 @@ def forgot_password():
         )
 
 
-        reset_html = f"""
-        <p>Hello {user.name},</p>
-        <p>We received a request to reset your password.</p>
-        <p>Your verification code is:</p>
-        <h2>{reset_code}</h2>
-        <p>If you did not request a password reset,
-        you can safely ignore this email.</p>
-        <p>Regards,<br>TechPath AI Team</p>
-        """
+        msg = Message(
+            subject="Reset Your TechPath AI Password",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[email]
+        )
 
-        try:
 
-            send_email(
-                to_email=email,
-                subject="Reset Your TechPath AI Password",
-                html=reset_html
-            )
+        msg.body = f"""
+Hello {user.name},
 
-        except Exception as e:
+We received a request to reset your password.
 
-            return render_template(
-                "forgot_password.html",
-                error=f"Email could not be sent: {e}"
-            )
+Your verification code is:
+
+{reset_code}
+
+If you did not request a password reset, you can safely ignore this email.
+
+Regards,
+TechPath AI Team
+"""
+
+
+        mail.send(msg)
 
 
         session["reset_email"] = email
