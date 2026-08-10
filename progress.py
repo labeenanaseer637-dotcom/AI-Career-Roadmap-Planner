@@ -7,8 +7,9 @@ class ProgressTracker:
 
         self.roadmap = roadmap
 
-        # Use the same SQLite database as the rest of TechPath AI
-        self.data_manager = DataManager("data/techpath.db")
+        # Uses DATABASE_URL from the environment (Postgres),
+        # same as the rest of TechPath AI
+        self.data_manager = DataManager()
 
     # =========================================================
     # COMPLETE SKILL
