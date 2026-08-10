@@ -1,19 +1,22 @@
-import sqlite3
 import os
+import psycopg2
+import psycopg2.extras
 from user import User
 
 
 class DataManager:
 
-    def __init__(self, db_file="data/techpath.db"):
+    def __init__(self, database_url=None):
 
-        self.db_file = db_file
+        # Render's Postgres add-on provides this automatically
+        # when a database is linked to the web service.
+        self.database_url = database_url or os.environ.get("DATABASE_URL")
 
-        # Make sure the directory exists
-        directory = os.path.dirname(self.db_file)
-
-        if directory:
-            os.makedirs(directory, exist_ok=True)
+        if not self.database_url:
+            raise Exception(
+                "DATABASE_URL environment variable is not set. "
+                "Add a Postgres database on Render and link it to this service."
+            )
 
         self.create_database()
 
@@ -23,11 +26,10 @@ class DataManager:
 
     def get_connection(self):
 
-        connection = sqlite3.connect(
-            self.db_file
+        connection = psycopg2.connect(
+            self.database_url,
+            cursor_factory=psycopg2.extras.RealDictCursor
         )
-
-        connection.row_factory = sqlite3.Row
 
         return connection
 
@@ -86,7 +88,7 @@ class DataManager:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS progress (
 
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
 
                 user_id TEXT NOT NULL,
 
@@ -105,6 +107,7 @@ class DataManager:
 
         connection.commit()
 
+        cursor.close()
         connection.close()
 
     # =====================================================
@@ -168,8 +171,8 @@ class DataManager:
             )
 
             VALUES (
-                ?, ?, ?, ?, ?, ?, ?, ?,
-                ?, ?, ?, ?, ?, ?
+                %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s
             )
         """, (
 
@@ -192,6 +195,7 @@ class DataManager:
 
         connection.commit()
 
+        cursor.close()
         connection.close()
 
     # =====================================================
@@ -211,6 +215,7 @@ class DataManager:
 
         rows = cursor.fetchall()
 
+        cursor.close()
         connection.close()
 
         return [
@@ -231,11 +236,12 @@ class DataManager:
         cursor.execute("""
             SELECT user_id
             FROM users
-            WHERE user_id LIKE 'AI%'
+            WHERE user_id LIKE 'AI%%'
         """)
 
         rows = cursor.fetchall()
 
+        cursor.close()
         connection.close()
 
         numbers = []
@@ -282,13 +288,14 @@ class DataManager:
         cursor.execute("""
             SELECT *
             FROM users
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (
             str(user_id).strip(),
         ))
 
         row = cursor.fetchone()
 
+        cursor.close()
         connection.close()
 
         return self._row_to_user(row)
@@ -306,13 +313,14 @@ class DataManager:
         cursor.execute("""
             SELECT *
             FROM users
-            WHERE LOWER(email) = LOWER(?)
+            WHERE LOWER(email) = LOWER(%s)
         """, (
             email.strip(),
         ))
 
         row = cursor.fetchone()
 
+        cursor.close()
         connection.close()
 
         return self._row_to_user(row)
@@ -330,13 +338,14 @@ class DataManager:
         cursor.execute("""
             SELECT *
             FROM users
-            WHERE name = ?
+            WHERE name = %s
         """, (
             name,
         ))
 
         row = cursor.fetchone()
 
+        cursor.close()
         connection.close()
 
         return self._row_to_user(row)
@@ -356,21 +365,21 @@ class DataManager:
 
             SET
 
-                name = ?,
-                age = ?,
-                education = ?,
-                career_goal = ?,
-                study_hours = ?,
-                password = ?,
-                current_level = ?,
-                programming_experience = ?,
-                interests = ?,
-                learning_style = ?,
-                email = ?,
-                verified = ?,
-                verification_code = ?
+                name = %s,
+                age = %s,
+                education = %s,
+                career_goal = %s,
+                study_hours = %s,
+                password = %s,
+                current_level = %s,
+                programming_experience = %s,
+                interests = %s,
+                learning_style = %s,
+                email = %s,
+                verified = %s,
+                verification_code = %s
 
-            WHERE user_id = ?
+            WHERE user_id = %s
 
         """, (
 
@@ -393,6 +402,7 @@ class DataManager:
 
         connection.commit()
 
+        cursor.close()
         connection.close()
 
     # =====================================================
@@ -407,20 +417,21 @@ class DataManager:
 
         cursor.execute("""
             DELETE FROM progress
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (
             str(user_id),
         ))
 
         cursor.execute("""
             DELETE FROM users
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (
             str(user_id),
         ))
 
         connection.commit()
 
+        cursor.close()
         connection.close()
 
     # =====================================================
@@ -444,14 +455,14 @@ class DataManager:
 
                 )
 
-                VALUES (?, ?, ?)
+                VALUES (%s, %s, %s)
 
-                ON CONFLICT(user_id, skill_name)
+                ON CONFLICT (user_id, skill_name)
 
                 DO UPDATE SET
 
                     completed =
-                    excluded.completed
+                    EXCLUDED.completed
 
             """, (
 
@@ -463,6 +474,7 @@ class DataManager:
 
         connection.commit()
 
+        cursor.close()
         connection.close()
 
     # =====================================================
@@ -484,7 +496,7 @@ class DataManager:
 
             FROM progress
 
-            WHERE user_id = ?
+            WHERE user_id = %s
 
         """, (
             str(user_id),
@@ -492,6 +504,7 @@ class DataManager:
 
         rows = cursor.fetchall()
 
+        cursor.close()
         connection.close()
 
         for row in rows:
@@ -516,11 +529,12 @@ class DataManager:
 
         cursor.execute("""
             DELETE FROM progress
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (
             str(user_id),
         ))
 
         connection.commit()
 
+        cursor.close()
         connection.close()

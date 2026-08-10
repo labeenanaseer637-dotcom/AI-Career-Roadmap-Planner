@@ -123,20 +123,16 @@ def send_email_brevo(to_email, subject, html_content=None, text_content=None):
 # DATA MANAGERS
 # =========================================================
 
-database_file = os.path.join(
-    DATA_DIR,
-    "techpath.db"
-)
-print("🔥 DATABASE PATH:", database_file)
 careers_file = os.path.join(
     DATA_DIR,
     "careers.csv"
 )
 print("🔥 CAREERS FILE PATH:", careers_file)
 
-data_manager = DataManager(
-    database_file
-)
+# DataManager now reads DATABASE_URL from the environment
+# (set automatically by Render when a Postgres database
+# is linked to this service).
+data_manager = DataManager()
 print("🔥 USERS IN DATABASE:", [
     {
         "id": u.user_id,
