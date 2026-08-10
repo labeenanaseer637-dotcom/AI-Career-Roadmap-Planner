@@ -1,6 +1,7 @@
 import re
 import os
 import random
+import requests
 
 from datetime import datetime
 
@@ -15,8 +16,6 @@ from flask import (
 )
 
 from dotenv import load_dotenv
-
-from flask_mail import Mail, Message
 
 from werkzeug.security import (
     check_password_hash,
@@ -68,22 +67,56 @@ app.secret_key = os.environ.get(
 
 
 # =========================================================
-# MAIL CONFIGURATION
+# MAIL CONFIGURATION (Brevo API)
 # =========================================================
 
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 587
-app.config["MAIL_USE_TLS"] = True
-
-app.config["MAIL_USERNAME"] = os.environ.get(
-    "MAIL_USERNAME"
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY")
+BREVO_SENDER_EMAIL = os.environ.get(
+    "BREVO_SENDER_EMAIL",
+    "aicareerplanner@gmail.com"
 )
+BREVO_SENDER_NAME = "TechPath AI"
 
-app.config["MAIL_PASSWORD"] = os.environ.get(
-    "MAIL_PASSWORD"
-)
 
-mail = Mail(app)
+def send_email_brevo(to_email, subject, html_content=None, text_content=None):
+    """
+    Sends an email via the Brevo transactional email API.
+    Raises an exception if the send fails, so callers can
+    handle errors the same way they did with Flask-Mail.
+    """
+
+    payload = {
+        "sender": {
+            "name": BREVO_SENDER_NAME,
+            "email": BREVO_SENDER_EMAIL
+        },
+        "to": [{"email": to_email}],
+        "subject": subject
+    }
+
+    if html_content:
+        payload["htmlContent"] = html_content
+
+    if text_content:
+        payload["textContent"] = text_content
+
+    response = requests.post(
+        "https://api.brevo.com/v3/smtp/email",
+        headers={
+            "api-key": BREVO_API_KEY,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        json=payload,
+        timeout=10
+    )
+
+    if response.status_code >= 300:
+        raise Exception(
+            f"Brevo API error {response.status_code}: {response.text}"
+        )
+
+    return response.json()
 
 
 # =========================================================
@@ -402,13 +435,7 @@ def create_profile():
             # VERIFICATION EMAIL
             # -------------------------------------------------
 
-            msg = Message(
-                subject="TechPath AI - Email Verification",
-                sender=app.config["MAIL_USERNAME"],
-                recipients=[email]
-            )
-
-            msg.html = render_template(
+            verification_html = render_template(
                 "emails/verification_email.html",
                 name=name,
                 code=verification_code,
@@ -418,7 +445,11 @@ def create_profile():
 
             try:
 
-                mail.send(msg)
+                send_email_brevo(
+                    to_email=email,
+                    subject="TechPath AI - Email Verification",
+                    html_content=verification_html
+                )
 
             except Exception as e:
 
@@ -981,14 +1012,7 @@ def forgot_password():
         )
 
 
-        msg = Message(
-            subject="Reset Your TechPath AI Password",
-            sender=app.config["MAIL_USERNAME"],
-            recipients=[email]
-        )
-
-
-        msg.body = f"""
+        reset_text = f"""
 Hello {user.name},
 
 We received a request to reset your password.
@@ -1004,7 +1028,11 @@ TechPath AI Team
 """
 
 
-        mail.send(msg)
+        send_email_brevo(
+            to_email=email,
+            subject="Reset Your TechPath AI Password",
+            text_content=reset_text
+        )
 
 
         session["reset_email"] = email
